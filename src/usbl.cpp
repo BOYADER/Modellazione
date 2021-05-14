@@ -1,5 +1,5 @@
 #include <iostream>
-#include "/usr/local/include/eigen3/Eigen/Dense"
+#include "/usr/include/eigen3/Eigen/Dense"
  
 using namespace Eigen;
 using namespace std;
