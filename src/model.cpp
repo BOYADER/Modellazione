@@ -1,8 +1,19 @@
 #include <iostream>
+<<<<<<< Updated upstream
 #include "/usr/include/eigen3/Eigen/Dense"
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <sstream>
+=======
+//#include "/usr/local/include/eigen3/Eigen/Dense"
+#include "/usr/include/eigen3/Eigen/Dense"
+ 
+/*  Model node must subscribe /tau topic in order to obtain control actions.
+    After solving dynamics differential equations it has to publish on 
+    /state_real topic, from which every sensor will subscribe and take the 
+    actual informations needed.
+*/      
+>>>>>>> Stashed changes
 
 using namespace Eigen;
 using namespace std;
