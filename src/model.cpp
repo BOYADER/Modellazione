@@ -1,11 +1,47 @@
 #include <iostream>
-#include "/usr/local/include/eigen3/Eigen/Dense"
- 
+#include "/usr/include/eigen3/Eigen/Dense"
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include <sstream>
+
 using namespace Eigen;
 using namespace std;
  
-int main()
+int main(int argc, char **argv)
 {
+  ros::init(argc, argv, "model");
+
+  ros::NodeHandle n;
+
+  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("state_real", 1000);
+
+  ros::Rate loop_rate(10);
+
+  
+  int count = 0;
+  while (ros::ok())
+  {
+    
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "hello world " << count;
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+
+    
+    chatter_pub.publish(msg);
+
+    ros::spinOnce();
+
+    loop_rate.sleep();
+    ++count;
+  }
+
+
+
+
   MatrixXd m_rb(6,6);
   m_rb(0,0)=50;
   m_rb(1,1)=50;
@@ -19,5 +55,8 @@ int main()
   m_rb(5,5)=2.9478;
 
 std::cout << "Ricky Costy chiappati questa matrice di ineriza va:\n" << m_rb << std::endl;
+return 0;
 }
+
+
 

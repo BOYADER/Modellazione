@@ -138,7 +138,10 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(model src/model.cpp)
 add_executable(dvl_sensor src/dvl.cpp)
-
+add_executable(usbl_sensor src/usbl.cpp)
+add_executable(ahrs_sensor src/ahrs.cpp)
+add_executable(gps_sensor src/gps.cpp)
+add_executable(depth_sensor src/depth.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -149,11 +152,27 @@ add_executable(dvl_sensor src/dvl.cpp)
 ## same as for the library above
 add_dependencies(model modellazione_generate_messages_cpp)
 add_dependencies(dvl_sensor modellazione_generate_messages_cpp)
+add_dependencies(usbl_sensor modellazione_generate_messages_cpp)
+add_dependencies(gps_sensor modellazione_generate_messages_cpp)
+add_dependencies(depth_sensor modellazione_generate_messages_cpp)
+add_dependencies(ahrs_sensor modellazione_generate_messages_cpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(model
   ${catkin_LIBRARIES}
 )
 target_link_libraries(dvl_sensor
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(ahrs_sensor
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(gps_sensor
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(depth_sensor
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(usbl_sensor
   ${catkin_LIBRARIES}
 )
 #############
