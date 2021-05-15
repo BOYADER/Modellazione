@@ -2,7 +2,7 @@
 #include "std_msgs/String.h"
 #include "constant.h"
 
-//float64 eta[6];
+
 std_msgs::String msg;
 
 void ahrs_state_read(const std_msgs::String::ConstPtr& eta)

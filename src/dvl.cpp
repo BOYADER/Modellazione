@@ -5,6 +5,8 @@
 //float64 eta[6];
 std_msgs::String msg;
 
+//TODO: variable variance
+
 void dvl_state_read(const std_msgs::String::ConstPtr& eta)
 {
   ROS_INFO("I heard: [%s]", eta->data.c_str());

@@ -2,7 +2,9 @@
 #include "std_msgs/String.h"
 #include "constant.h"
 
-//float64 eta[6];
+
+//TODO: Conversion between NED to LL
+
 std_msgs::String msg;
 
 void gps_state_read(const std_msgs::String::ConstPtr& eta)

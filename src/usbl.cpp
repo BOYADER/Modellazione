@@ -2,7 +2,8 @@
 #include "std_msgs/String.h"
 #include "constant.h"
 
-//float64 eta[6];
+//TODO: variable frequency & conversion between NED => RBE			
+
 std_msgs::String msg;
 
 void usbl_state_read(const std_msgs::String::ConstPtr& eta)
@@ -24,7 +25,10 @@ int main(int argc, char **argv){
   ros::Publisher usbl_pub = usbl_sensor.advertise<std_msgs::String>("sensor/usbl", MAX_QUEUE_LENGTH);
 
 
-  ros::Rate loop_rate(10);
+
+  //Compute RoundTripTime
+  //ros::Rate loop_rate(RTT);
+  //loop_rate.sleep();
 
   while(ros::ok()){
 
@@ -33,6 +37,8 @@ int main(int argc, char **argv){
     ROS_INFO("sto per pubblicare: %s", msg.data.c_str());
 
     usbl_pub.publish(msg);
+  	//Compute RoundTripTime
+  	//ros::Rate loop_rate(RTT);
 
     loop_rate.sleep();
 

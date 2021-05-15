@@ -1,0 +1,4 @@
+geometry_msgs/Vector3 eta_1
+geometry_msgs/Vector3 eta_1
+geometry_msgs/Vector3 ni_1
+geometry_msgs/Vector3 ni_2
