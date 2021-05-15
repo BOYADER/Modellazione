@@ -1,0 +1,4 @@
+
+#define MAX_QUEUE_LENGTH 1000
+
+#define SENSOR_FREQUENCY 10
