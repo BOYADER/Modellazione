@@ -1,3 +1,4 @@
+
 /* PARAMETRI DEL ROBOT */
 #define R_A 0.525		//semiasse maggiore    								[m]
 #define R_B 0.15		//semiasse minore_1 								[m]
