@@ -1,1 +1,1 @@
-geometry_msg/Wrench tau
+geometry_msgs/Wrench tau

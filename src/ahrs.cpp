@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "constant.h"
+#include "/usr/include/eigen3/Eigen/Dense"
 
 
 std_msgs::String msg;
@@ -37,8 +38,6 @@ int main(int argc, char **argv){
     loop_rate.sleep();
 
   }
-
-  ros::spin();
 
   return 0;
 }

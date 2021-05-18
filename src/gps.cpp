@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "constant.h"
+#include "/usr/include/eigen3/Eigen/Dense"
 
 
 //TODO: Conversion between NED to LL

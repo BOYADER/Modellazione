@@ -1,2 +1,2 @@
-geometry_msgs/Vector3 rbe 
+geometry_msgs/Vector3 pos 
 float64 counter

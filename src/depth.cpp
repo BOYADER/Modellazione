@@ -1,6 +1,8 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "constant.h"
+#include "/usr/include/eigen3/Eigen/Dense"
+#include "modellazione/depth.h"
 
 //float64 eta[6];
 std_msgs::String msg;
@@ -21,7 +23,7 @@ int main(int argc, char **argv){
   ros::NodeHandle depth_sensor;
 
   ros::Subscriber depth_sub = depth_sensor.subscribe("state_real", 1, depth_state_read);
-  ros::Publisher depth_pub = depth_sensor.advertise<std_msgs::String>("sensor/depth", MAX_QUEUE_LENGTH);
+  ros::Publisher depth_pub = depth_sensor.advertise<modellazione::depth>("sensor/depth", MAX_QUEUE_LENGTH);
 
 
   ros::Rate loop_rate(10);

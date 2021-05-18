@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "constant.h"
+#include "/usr/include/eigen3/Eigen/Dense"
 
 //float64 eta[6];
 std_msgs::String msg;
@@ -40,7 +41,6 @@ int main(int argc, char **argv){
 
   }
 
-  ros::spin();
 
   return 0;
 }

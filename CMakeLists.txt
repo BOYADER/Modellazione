@@ -13,10 +13,11 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   genmsg
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
-find_package(cmake_modules REQUIRED)
+#find_package(cmake_modules REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -49,11 +50,17 @@ find_package(cmake_modules REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+ add_message_files(
+   FILES
+   ahrs.msg
+   dvl.msg
+   imu.msg
+   tau.msg
+   depth.msg
+   gps.msg
+   state_real.msg
+   usbl.msg
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -108,7 +115,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES modellazione
-#  CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs
+   CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs message_runtime
 #  DEPENDS system_lib
 )
 
