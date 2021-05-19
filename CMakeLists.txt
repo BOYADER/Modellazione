@@ -149,6 +149,9 @@ add_executable(usbl_sensor src/usbl.cpp)
 add_executable(ahrs_sensor src/ahrs.cpp)
 add_executable(gps_sensor src/gps.cpp)
 add_executable(depth_sensor src/depth.cpp)
+add_executable(fake_control src/fake_control.cpp)
+add_executable(fake_nav src/fake_nav.cpp)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -163,6 +166,9 @@ add_dependencies(usbl_sensor modellazione_generate_messages_cpp)
 add_dependencies(gps_sensor modellazione_generate_messages_cpp)
 add_dependencies(depth_sensor modellazione_generate_messages_cpp)
 add_dependencies(ahrs_sensor modellazione_generate_messages_cpp)
+add_dependencies(fake_control modellazione_generate_messages_cpp)
+add_dependencies(fake_nav modellazione_generate_messages_cpp)
+
 ## Specify libraries to link a library or executable target against
 target_link_libraries(model
   ${catkin_LIBRARIES}
@@ -182,6 +188,13 @@ target_link_libraries(depth_sensor
 target_link_libraries(usbl_sensor
   ${catkin_LIBRARIES}
 )
+target_link_libraries(fake_control
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(fake_nav
+  ${catkin_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############

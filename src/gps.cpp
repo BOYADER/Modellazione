@@ -36,7 +36,7 @@ int main(int argc, char **argv){
   ros::NodeHandle gps_sensor;
 
   ros::Subscriber gps_sub = gps_sensor.subscribe("state_real", 1, gps_state_read);
-  ros::Publisher gps_pub = gps_sensor.advertise<std_msgs::String>("sensor/gps", MAX_QUEUE_LENGTH);
+  ros::Publisher gps_pub = gps_sensor.advertise<modellazione::gps>("sensor/gps", MAX_QUEUE_LENGTH);
 
   //Generazione Rumore
   default_random_engine generator;

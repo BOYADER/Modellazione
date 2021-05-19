@@ -19,9 +19,9 @@ Vector3f new_pos(0,0,0);
 void ahrs_state_read(const modellazione::state_real& state){
   ahrs_measure.rpy = state.eta_2;
   ahrs_measure.gyro = state.ni_2;
-  new_pos(1) = state.eta_1.x;
-  new_pos(2) = state.eta_1.y;
-  new_pos(3) = state.eta_1.z;
+  new_pos(0) = state.eta_1.x;
+  new_pos(1) = state.eta_1.y;
+  new_pos(2) = state.eta_1.z;
   
 }
 void compute_measure(){
@@ -29,9 +29,9 @@ void compute_measure(){
   new_vel = (new_pos-old_pos);
   old_pos = new_pos;
   Vector3f acc = (new_vel - old_vel);
-  ahrs_measure.acc.x = acc(1);
-  ahrs_measure.acc.y = acc(2);
-  ahrs_measure.acc.z = acc(3);
+  ahrs_measure.acc.x = acc(0);
+  ahrs_measure.acc.y = acc(1);
+  ahrs_measure.acc.z = acc(2);
   old_vel = new_vel;
 }
 
