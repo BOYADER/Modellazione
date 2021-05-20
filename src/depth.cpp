@@ -14,7 +14,7 @@ modellazione::depth depth_measure;
 void depth_state_read(const modellazione::state_real &state)
 {
 
-  //TODO: ruotare in terna body e aggiungere rumore
+  //TODO: ruotare in terna body
   depth_measure.z = state.eta_1.z; //salvo lo stato vero
   depth_measure.counter++;         
 }

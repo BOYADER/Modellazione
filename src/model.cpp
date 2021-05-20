@@ -7,8 +7,7 @@
 #include "modellazione/tau.h"
 #include <sstream>
 #include "constant.h"
-#include <math.h>
-
+#include "math_utility.h"
 /*  Model node must subscribe /tau topic in order to obtain control actions.
     After solving dynamics differential equations it has to publish on 
     /state_real topic, from which every sensor will subscribe and take the 
@@ -98,7 +97,8 @@ void updateC(){
  
 }
 
-void updateG(){
+void updateG(float modellazione::state_real.eta_2){
+  Vector3f eta_2 = ros2eigen(eta2);
 
 }
 
@@ -145,6 +145,15 @@ int main(int argc, char **argv)
   std::cout << "alpha0 = " << alpha_0 << std::endl;
   std::cout << "beta0 = " << beta_0 << std::endl;
   std::cout << M << std::endl;
+
+  /* TEST COMPUTE_JACOBIAN */
+  modellazione::state_real test_state;
+  test_state.eta_2.x = M_PI_2/2;
+  test_state.eta_2.y = M_PI_2/2;
+  test_state.eta_2.z = M_PI_2/2;
+  MatrixXf J_tot = compute_jacobian_tot(test_state.eta_2);
+  std::cout <<J_tot << std::endl;
+  
     
   while (ros::ok()){
     

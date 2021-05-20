@@ -7,7 +7,7 @@
 #define R_D_GB 0.07 	//distanza tra centro geometrico
 						// e centro di massa	[m]
 
-
+#define RHO_V 1016.7    //densità veicolo [kg/m^3]
 /*PARAMETRI MATRICI DI CORIOLIS E DI DAMPING */
 
 // parametri tensore di inerzia
@@ -26,4 +26,7 @@
 #define MAX_QUEUE_LENGTH 1000
 #define SENSOR_FREQUENCY 10
 
-#define RHO_W 1027
+#define RHO_W 1027  //[kg/m^3]
+#define G 9.80665   //[m/s^2]
+
+
