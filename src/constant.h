@@ -4,7 +4,7 @@
 #define R_B 0.15		//semiasse minore_1 [m]								
 #define R_C 0.15		//semiasse minore_2 [m]								
 #define R_M 50			//massa				[kg]												[kg]
-#define R_D_GB 0.07 	//distanza tra centro geometrico
+#define R_GB 0.07 	//distanza tra centro geometrico
 						// e centro di massa	[m]
 
 #define RHO_V 1016.7    //densità veicolo [kg/m^3]
@@ -27,6 +27,6 @@
 #define SENSOR_FREQUENCY 10
 
 #define RHO_W 1027  //[kg/m^3]
-#define G 9.80665   //[m/s^2]
+#define G_ACC 9.80665   // gravity acceleration [m/s^2]
 
 

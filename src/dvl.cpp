@@ -4,16 +4,22 @@
 #include "/usr/include/eigen3/Eigen/Dense"
 #include "modellazione/state_real.h"
 #include "modellazione/dvl.h"
+#include "math_utility.h"
+#include "sensor_utility.h"
+#include <random>
+
+
+using namespace Eigen;
+using namespace std;
 
 //TODO: variable variance
-
 modellazione::dvl dvl_measure;
 
 
-void dvl_state_read(const modellazione::state_real & state)
+void dvl_state_read(const modellazione::state_real &state)
 {
-  /* ROS_INFO("I heard: [%s]", state->data.c_str());
-  msg.data = eta->state.c_str();*/
+
+
   
 }
 
@@ -28,14 +34,18 @@ int main(int argc, char **argv){
   ros::Subscriber dvl_sub = dvl_sensor.subscribe("state_real", 1, dvl_state_read);
   ros::Publisher dvl_pub = dvl_sensor.advertise<modellazione::dvl>("sensor/dvl", MAX_QUEUE_LENGTH);
 
+  initialise_R_dvl_body();
+  //default_random_engine generator;
+  //NOTA: ASSUMIAMO PER ORA CHE LA STD_DEV (1%) SIA CALCOLATA SU UNA 
+  //VELOCITA' DI RIFERIMENTO DI 2 m/s
+  //normal_distribution<double> dvl_distribution(0, 0.02);
+
 
   ros::Rate loop_rate(10);
 
-  while(ros::ok()){
+  while(ros::ok()){ 
 
     ros::spinOnce();
- 
-    //ROS_INFO("sto per pubblicare: %s", msg.data.c_str());
 
     dvl_pub.publish(dvl_measure);
 

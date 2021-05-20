@@ -97,9 +97,12 @@ void updateC(){
  
 }
 
-void updateG(float modellazione::state_real.eta_2){
-  Vector3f eta_2 = ros2eigen(eta2);
-
+void updateG(){
+  Matrix3f J_inv = compute_jacobian1(state.eta_2).transpose();
+  Vector3f f_g = J_inv*weight;
+  Vector3f f_b = J_inv*buoyancy;
+  G.head(3) = f_g + f_b;
+  G.tail(3) = r_b.cross(f_b);
 }
 
 void resolveDynamics(){

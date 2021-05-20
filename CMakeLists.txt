@@ -170,7 +170,7 @@ add_dependencies(fake_control modellazione_generate_messages_cpp)
 add_dependencies(fake_nav modellazione_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(model
+target_link_libraries(model 
   ${catkin_LIBRARIES}
 )
 target_link_libraries(dvl_sensor

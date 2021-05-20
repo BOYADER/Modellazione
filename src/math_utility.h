@@ -20,13 +20,15 @@ Vector3f ros2eigen(geometry_msgs::Vector3 v_msg)
 }
 
 float robot_volume= (4/3) * M_PI * R_A * R_B * R_C;
-float robot_weigth= RHO_V * robot_volume * G;
-float robot_buoyancy = RHO_W * robot_volume * G;
+float robot_weigth= RHO_V * robot_volume * G_ACC;
+float robot_buoyancy = RHO_W * robot_volume * G_ACC;
+Vector3f r_b(0, 0, R_GB);
+
+Vector3f weight(0, 0, robot_weigth);
+Vector3f buoyancy(0, 0, -robot_buoyancy);
 
 
-
-
-//Returns 6x6 Jacobian BODY=>NED
+//Returns kinematics Jacobian
 
 Matrix3f compute_jacobian1(geometry_msgs::Vector3 eta2){
 	Vector3f eta_2 = ros2eigen(eta2);
@@ -45,7 +47,7 @@ Matrix3f compute_jacobian1(geometry_msgs::Vector3 eta2){
 
 }
 
-
+//Returns angular velocity Jacobian
 Matrix3f compute_jacobian2(geometry_msgs::Vector3 eta2){
 	Vector3f eta_2 = ros2eigen(eta2);
 	Matrix3f J_2(3, 3); 
