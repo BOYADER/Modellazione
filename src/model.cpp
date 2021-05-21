@@ -128,9 +128,9 @@ void tau_read(const modellazione::tau &wrench){/*
             dyn_force.x, dyn_force.y, dyn_force.z,
             dyn_torque.x, dyn_torque.y, dyn_torque.z);*/
 }
+        
 
-
-int main(int argc, char **argv)
+int main(int argc, char **argv)   
 {
   ros::init(argc, argv, "model");
 
@@ -141,12 +141,12 @@ int main(int argc, char **argv)
 
   /* Raccolta info su stato iniziale come definito nel file mission.yaml */
   float yaw, pitch, roll, lat, lon, depth;
-  model.getParam("/initial_pose/orientation/yaw",   yaw);
-  model.getParam("/initial_pose/orientation/pitch", pitch);
-  model.getParam("/initial_pose/orientation/roll",  roll);
-  model.getParam("/initial_pose/position/latitude", lat);
-  model.getParam("/initial_pose/position/longitude", lon);
-  model.getParam("/initial_pose/position/depth", depth);
+  model.getParam("/initial_pose/orientation/yaw",     yaw);
+  model.getParam("/initial_pose/orientation/pitch",   pitch);
+  model.getParam("/initial_pose/orientation/roll",    roll);
+  model.getParam("/initial_pose/position/latitude",   lat);
+  model.getParam("/initial_pose/position/longitude",  lon);
+  model.getParam("/initial_pose/position/depth",      depth);
   /*----------------------------------------------------------------------*/
 
   ros::Rate loop_rate(2);

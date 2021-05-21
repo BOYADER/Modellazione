@@ -1,6 +1,9 @@
 #include "ros/ros.h"
 #include "/usr/include/eigen3/Eigen/Dense"
-#include<cmath>
+#include <cmath>
+
+#define A 6378137.0
+#define F 1/298.257223563
 
 using namespace Eigen;
 
@@ -91,4 +94,25 @@ Matrix3f skew_symmetric(geometry_msgs::Vector3 ni2){
 	S(2,1) = ni_2(0);
 
 	return S;
+}
+
+//CONVERSIONE DEGREE2RAD
+float compute_deg2rad(float rad){
+  float degree = rad * M_PI /180;
+  return degree;
+}
+
+//CONVERSIONE NED2LLA
+Vector2f compute_conversion(geometry_msgs::Vector3 eta1, geometry_msgs::Vector3 lla0){
+  Vector3f eta_1 = ros2eigen(eta1);
+  Vector2f lla0rad;
+  lla0rad(0) = compute_deg2rad(lla0.x);
+  lla0rad(1) = compute_deg2rad(lla0.y);
+  float Rn = A / sqrt (1 - (2 * F - F * F) * sin(lla0rad(0)) * sin(lla0rad(0)));
+  float Rm = Rn * (1 - (2 * F - F * F))/(1 - (2 * F - F * F) * sin(lla0rad(0)) * sin(lla0rad(0)));
+  Vector2f LLA;
+  LLA(0) = (lla0rad(0) + atan2(1, Rm) * eta_1(0)) * 180/M_PI;
+  LLA(1) = (lla0rad(1) + atan2(1, Rn * cos(lla0rad(0))) * eta_1(1)) * 180/M_PI;
+
+  return LLA;
 }
