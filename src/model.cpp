@@ -105,16 +105,16 @@ void updateG(){
   G.tail(3) = r_b.cross(f_b);
 }
 
-void resolveDynamics(){
+void resolveDynamics(float test){
   state.eta_1.x = 0;
   state.eta_1.y = 50;
   state.eta_1.z = 50;
   state.eta_2.x = 0;
   state.eta_2.y = 0;
   state.eta_2.z = 0;
-  state.ni_1.x = 0;
-  state.ni_1.y = 0;
-  state.ni_1.z = 0;
+  state.ni_1.x = 1 + test;
+  state.ni_1.y = 2 + test;
+  state.ni_1.z = 3 + test;
   state.ni_2.x = 0;
   state.ni_2.y = 0;
   state.ni_2.z = 0;
@@ -139,7 +139,7 @@ int main(int argc, char **argv)
   ros::Subscriber model_sub = model.subscribe("tau", 1000, tau_read);
   ros::Publisher model_pub = model.advertise<modellazione::state_real>("state_real", MAX_QUEUE_LENGTH);
 
-  ros::Rate loop_rate(1);
+  ros::Rate loop_rate(2);
   
   float count = 1;
 
@@ -156,21 +156,23 @@ int main(int argc, char **argv)
   test_state.eta_2.z = M_PI_2/2;
   MatrixXf J_tot = compute_jacobian_tot(test_state.eta_2);
   std::cout <<J_tot << std::endl;
-  
+  float test = 0.5;
     
   while (ros::ok()){
     
     ros::spinOnce();
 
-    resolveDynamics();
-    state.prova = count++;
+    //passo il parametro per testare la variazione della std_dev del DVL
+    resolveDynamics(test);
+    test += 10;
+    ///////////////////////////////////////////////////////////////////
 
-    ROS_INFO("Sto per pubblicare eta1 = [%f %f %f] \n msg numero: %f ", state.eta_1.x, state.eta_1.y, state.eta_1.z,
-              state.prova);
+    state.prova = count++;
+    
+    ROS_INFO("Sto per pubblicare eta1 = [%f %f %f] \n ni1 = [%f %f %f] \n msg numero: %f ", state.eta_1.x, state.eta_1.y, state.eta_1.z,
+              state.ni_1.x, state.ni_1.y, state.ni_1.z, state.prova);
 
     model_pub.publish(state);
-
-    //ros::spinOnce();
 
     loop_rate.sleep();
   }

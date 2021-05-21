@@ -77,3 +77,18 @@ MatrixXf compute_jacobian_tot(geometry_msgs::Vector3 eta2){
 
 	return J_tot;
 }
+
+Matrix3f skew_symmetric(geometry_msgs::Vector3 ni2){
+	Vector3f ni_2 = ros2eigen(ni2);
+	Matrix3f S(3,3);
+
+	S(0,0) = S(1,1) = S(2,2) = 0;
+	S(0,1) = -ni_2(2);
+	S(0,2) = ni_2(1);
+	S(1,0) = ni_2(2);
+	S(1,2) = -ni_2(0);
+	S(2,0) = -ni_2(1);
+	S(2,1) = ni_2(0);
+
+	return S;
+}

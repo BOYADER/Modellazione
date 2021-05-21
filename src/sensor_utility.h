@@ -5,14 +5,14 @@ using namespace Eigen;
 
 //PROFONDIMETRO
 #define R_PROFONDIMETRO 0.08 //distanza tra centro di massa e profondimetro [m]
-
+Vector3f p_depth(0, 0, R_PROFONDIMETRO);
 
 //DVL
 #define R_DVL_X 0.37 //coordinata x del dvl rispetto alla terna body
 #define R_DVL_Z 0.03 //coordinata z del dvl rispetto alla terna body
-#define THETA_DVL M_PI/4
+#define THETA_DVL M_PI/4 //rotazione relativa tra terna body e dvl 
 
-Vector3f p_depth(0, 0, R_PROFONDIMETRO);
+
 Vector3f p_dvl(R_DVL_X, 0, R_DVL_Z); 
 MatrixXf R_dvl_body(3,3);
 

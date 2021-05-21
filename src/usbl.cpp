@@ -83,7 +83,7 @@ int main(int argc, char **argv){
   	ros::Rate loop_rate(RTT);
     loop_rate.sleep();
 
-    ROS_INFO("sto per pubblicare: rbe = \n [%f \n %f \n %f] \n",usbl_measure.pos.x, usbl_measure.pos.y, usbl_measure.pos.z);
+    //ROS_INFO("sto per pubblicare: rbe = \n [%f \n %f \n %f] \n",usbl_measure.pos.x, usbl_measure.pos.y, usbl_measure.pos.z);
     usbl_pub.publish(usbl_measure);
 
   }

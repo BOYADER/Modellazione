@@ -17,7 +17,7 @@ void depth_state_read(const modellazione::state_real &state)
 {
   //NON E' STATA SUPPOSTA ALCUNA SEMPLIFICAZIONE RIGUARDO POSIZIONE DEL PROFONDIMETRO
   Matrix3f J_inv = compute_jacobian1(state.eta_2).transpose();
-  float p_depth_z = (J_inv*p_depth)(3);
+  float p_depth_z = (J_inv*p_depth)(2);
   depth_measure.z = state.eta_1.z + p_depth_z; //salvo lo stato vero
   depth_measure.counter++;         
 }
@@ -46,7 +46,7 @@ int main(int argc, char **argv){
 
     if(old_counter != depth_measure.counter){
       //depth_measure.z += depth_distribution(generator);
-      ROS_INFO("sto per pubblicare: \n depth = [%f] \n counter = [%f]", depth_measure.z, depth_measure.counter);
+      //ROS_INFO("sto per pubblicare: \n depth = [%f] \n counter = [%f]", depth_measure.z, depth_measure.counter);
       depth_pub.publish(depth_measure);
     }
   
