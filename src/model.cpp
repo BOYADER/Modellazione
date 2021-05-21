@@ -139,6 +139,16 @@ int main(int argc, char **argv)
   ros::Subscriber model_sub = model.subscribe("tau", 1000, tau_read);
   ros::Publisher model_pub = model.advertise<modellazione::state_real>("state_real", MAX_QUEUE_LENGTH);
 
+  /* Raccolta info su stato iniziale come definito nel file mission.yaml */
+  float yaw, pitch, roll, lat, lon, depth;
+  model.getParam("/initial_pose/orientation/yaw",   yaw);
+  model.getParam("/initial_pose/orientation/pitch", pitch);
+  model.getParam("/initial_pose/orientation/roll",  roll);
+  model.getParam("/initial_pose/position/latitude", lat);
+  model.getParam("/initial_pose/position/longitude", lon);
+  model.getParam("/initial_pose/position/depth", depth);
+  /*----------------------------------------------------------------------*/
+
   ros::Rate loop_rate(2);
   
   float count = 1;
