@@ -121,10 +121,10 @@ void resolveDynamics(float test){
 }
 
 
-void tau_read(const modellazione::tau &wrench){/*
+void tau_read(const modellazione::tau &wrench){
   dyn_force = wrench.tau.force;
   dyn_torque = wrench.tau.torque;
-  ROS_INFO("I heard force = [%f %f %f] \n torque = [%f %f %f] \n", 
+  /*ROS_INFO("I heard force = [%f %f %f] \n torque = [%f %f %f] \n", 
             dyn_force.x, dyn_force.y, dyn_force.z,
             dyn_torque.x, dyn_torque.y, dyn_torque.z);*/
 }
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
 
   ros::NodeHandle model;
 
-  ros::Subscriber model_sub = model.subscribe("tau", 1000, tau_read);
+  ros::Subscriber model_sub = model.subscribe("tau", 1, tau_read);
   ros::Publisher model_pub = model.advertise<modellazione::state_real>("state_real", MAX_QUEUE_LENGTH);
 
   /* Raccolta info su stato iniziale come definito nel file mission.yaml */
@@ -179,8 +179,10 @@ int main(int argc, char **argv)
 
     state.prova = count++;
     
-    ROS_INFO("Sto per pubblicare eta1 = [%f %f %f] \n ni1 = [%f %f %f] \n msg numero: %f ", state.eta_1.x, state.eta_1.y, state.eta_1.z,
-              state.ni_1.x, state.ni_1.y, state.ni_1.z, state.prova);
+    ROS_INFO("Sto per pubblicare eta1 = [%f %f %f] \n ni1 = [%f %f %f] \n msg numero: %f ",
+              state.eta_1.x, state.eta_1.y, state.eta_1.z,
+              state.ni_1.x, state.ni_1.y, state.ni_1.z,
+              state.prova);
 
     model_pub.publish(state);
 

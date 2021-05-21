@@ -97,22 +97,22 @@ Matrix3f skew_symmetric(geometry_msgs::Vector3 ni2){
 }
 
 //CONVERSIONE DEGREE2RAD
-float compute_deg2rad(float rad){
+float deg2rad(float rad){
   float degree = rad * M_PI /180;
   return degree;
 }
 
 //CONVERSIONE NED2LLA
-Vector2f compute_conversion(geometry_msgs::Vector3 eta1, geometry_msgs::Vector3 lla0){
+Vector2f NEDtoLL_conversion(geometry_msgs::Vector3 eta1, geometry_msgs::Vector3 lla0){
   Vector3f eta_1 = ros2eigen(eta1);
   Vector2f lla0rad;
-  lla0rad(0) = compute_deg2rad(lla0.x);
-  lla0rad(1) = compute_deg2rad(lla0.y);
+  lla0rad(0) = deg2rad(lla0.x);
+  lla0rad(1) = deg2rad(lla0.y);
   float Rn = A / sqrt (1 - (2 * F - F * F) * sin(lla0rad(0)) * sin(lla0rad(0)));
   float Rm = Rn * (1 - (2 * F - F * F))/(1 - (2 * F - F * F) * sin(lla0rad(0)) * sin(lla0rad(0)));
-  Vector2f LLA;
-  LLA(0) = (lla0rad(0) + atan2(1, Rm) * eta_1(0)) * 180/M_PI;
-  LLA(1) = (lla0rad(1) + atan2(1, Rn * cos(lla0rad(0))) * eta_1(1)) * 180/M_PI;
+  Vector2f LL;
+  LL(0) = (lla0rad(0) + atan2(1, Rm) * eta_1(0)) * 180/M_PI;
+  LL(1) = (lla0rad(1) + atan2(1, Rn * cos(lla0rad(0))) * eta_1(1)) * 180/M_PI;
 
-  return LLA;
+  return LL;
 }

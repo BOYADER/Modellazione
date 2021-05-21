@@ -4,6 +4,7 @@
 #include "/usr/include/eigen3/Eigen/Dense"
 #include "modellazione/gps.h"
 #include "modellazione/state_real.h"
+#include "math_utility.h"
 #include <random>
 
 using namespace std;
@@ -20,10 +21,10 @@ void gps_state_read(const modellazione::state_real &state)
     gps_measure.under_water = true;
   else 
     gps_measure.under_water = false;
+  gps_measure.counter++;
 }
 
 void compute_measure(){
-
   //TODO: Conversion between NED to LL
 
 
@@ -41,13 +42,30 @@ int main(int argc, char **argv){
   //Generazione Rumore
   default_random_engine generator;
   normal_distribution<double> gps_distribution(0, 2); //[m]
+  Vector2f LL;
+
+  //DATI NECESSARI PER LA CONVERSIONE NED => LL /////////////////
+  float lat0, lon0, a0;
+  gps_sensor.getParam("/initial_pose/position/latitude",   lat0);
+  gps_sensor.getParam("/initial_pose/position/longitude",  lon0);
+  gps_sensor.getParam("/initial_pose/position/depth",      a0);
+  geometry_msgs::Vector3 pos_0;
+  pos_0.x = lat0;
+  pos_0.y = lon0;
+  pos_0.z = a0;
+  ///////////////////////////////////////////////////////////////
 
   ros::Rate loop_rate(10);
 
   while(ros::ok()){
 
   	ros::spinOnce();
-    compute_measure();
+    //compute_measure();
+
+    LL = NEDtoLL_conversion(eta1, pos_0);
+    gps_measure.lla.x = LL(0);
+    gps_measure.lla.y = LL(1);
+
     gps_measure.lla.x += gps_distribution(generator);
     gps_measure.lla.y += gps_distribution(generator);
 

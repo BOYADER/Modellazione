@@ -16,6 +16,9 @@ Vector3f old_vel(0,0,0);
 Vector3f new_vel(0,0,0);
 Vector3f new_pos(0,0,0);
 
+//TODO: INSERIRE ETA_2_DOT COME PRESO DALLA DINAMICA
+
+
 void ahrs_state_read(const modellazione::state_real& state){
   ahrs_measure.rpy = state.eta_2;
   ahrs_measure.gyro = state.ni_2;
@@ -48,8 +51,8 @@ int main(int argc, char **argv){
   default_random_engine generator;
   normal_distribution<double> rp_distribution(0, 0.3);    //[deg]
   normal_distribution<double> y_distribution(0, 1);       //[deg]
-  normal_distribution<double> gyro_distribution(0, 0); //incognita
-  normal_distribution<double> acc_distribution(0, 0);  //incognita
+  normal_distribution<double> gyro_distribution(0, 0);    //incognita
+  normal_distribution<double> acc_distribution(0, 0);     //incognita
 
   ros::Rate loop_rate(SENSOR_FREQUENCY);
   ros::spinOnce();
