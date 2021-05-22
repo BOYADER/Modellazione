@@ -9,7 +9,7 @@
 #include <cmath>
 #include <random>
 
-//TODO: variable frequency & conversion between NED => RBE			
+//TODO: variable frequency 	
 
 using namespace Eigen;
 using namespace std;
@@ -17,11 +17,10 @@ using namespace std;
 geometry_msgs::Vector3 eta1, eta2;
 modellazione::usbl usbl_measure; 
 
-
+float dist; // distanza tra USBL e transponder usata per calcolare RRT
 
 void usbl_state_read(const modellazione::state_real &state)
 {
-  //Salvo posizione e orientazione in terna NED
   eta1 = state.eta_1;
   eta2 = state.eta_2;
 
@@ -36,6 +35,7 @@ void compute_measure(){
     Matrix3f J_inv = compute_jacobian1(eta2).transpose(); //ned to usbl(coincide con body)
 
     p_t = J_inv * ( p_t_ned - ( ros2eigen(eta1) + J_inv * (p_usbl) ) );
+    dist = p_t.norm();
 
     usbl_measure.pos.x = sqrt(p_t(0)*p_t(0) + p_t(1)*p_t(1) + p_t(2)*p_t(2));    //range
     usbl_measure.pos.y = atan2(p_t(1), p_t(0));                                  //bearing
@@ -47,9 +47,7 @@ void compute_measure(){
 
 
 int compute_frequency(){
-  //TODO: CALCOLARE LA FREQUENZA
-  return 1;
-
+  return V_C/(2*dist);
 }
 
 
@@ -83,10 +81,10 @@ int main(int argc, char **argv){
     usbl_measure.pos.y += bearing_distribution(generator);
     usbl_measure.pos.z += elevation_distribution(generator);
 
+    cout << "USBL Frequenza variabile?" << endl;
 
   	ros::Rate loop_rate(RTT);
     loop_rate.sleep();
-
     //ROS_INFO("sto per pubblicare: rbe = \n [%f \n %f \n %f] \n",usbl_measure.pos.x, usbl_measure.pos.y, usbl_measure.pos.z);
     usbl_pub.publish(usbl_measure);
 
@@ -96,3 +94,4 @@ int main(int argc, char **argv){
   return 0;
 }
 
+ 

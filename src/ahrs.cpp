@@ -35,6 +35,8 @@ int main(int argc, char **argv){
   normal_distribution<double> y_distribution(0, 1);       //[deg]
   normal_distribution<double> gyro_distribution(0, 0);    //incognita
   normal_distribution<double> acc_distribution(0, 0);     //incognita
+  float acc_bias = 0;
+  float gyro_bias = 0;
 
   ros::Rate loop_rate(SENSOR_FREQUENCY);
   ros::spinOnce();
@@ -43,15 +45,16 @@ int main(int argc, char **argv){
   while(ros::ok()){
 
   	ros::spinOnce();
+
     ahrs_measure.rpy.x += rp_distribution(generator);
     ahrs_measure.rpy.y += rp_distribution(generator);
     ahrs_measure.rpy.z += y_distribution(generator);
-    ahrs_measure.gyro.x += gyro_distribution(generator);
-    ahrs_measure.gyro.y += gyro_distribution(generator);
-    ahrs_measure.gyro.z += gyro_distribution(generator);
-    ahrs_measure.acc.x += acc_distribution(generator);
-    ahrs_measure.acc.y += acc_distribution(generator);
-    ahrs_measure.acc.z += acc_distribution(generator);
+    ahrs_measure.gyro.x += gyro_distribution(generator) + gyro_bias;
+    ahrs_measure.gyro.y += gyro_distribution(generator) + gyro_bias;
+    ahrs_measure.gyro.z += gyro_distribution(generator) + gyro_bias;
+    ahrs_measure.acc.x += acc_distribution(generator) + acc_bias;
+    ahrs_measure.acc.y += acc_distribution(generator) + acc_bias;
+    ahrs_measure.acc.z += acc_distribution(generator) + acc_bias;
 
 
     ahrs_pub.publish(ahrs_measure);

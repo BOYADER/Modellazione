@@ -27,25 +27,40 @@ float e = 1 - (R_B/R_A) * (R_B/R_A);
 float alpha_0 = 2 * (1 - e * e) * ( 0.5 * log((1 + e) / (1 - e)) - e) / (e * e * e);
 float beta_0 = 1/(e*e) - (1 - e*e)* log((1+e)/(1-e)) / (2*e*e*e);
 
-float X_u_dot = - alpha_0 / (2 - alpha_0) * R_M;
+//float X_u_dot = - alpha_0 / (2 - alpha_0) * R_M;
 float Y_v_dot = - beta_0 / (2 - beta_0) * R_M;
-//float Z_w_dot = - beta_0 / (2 - beta_0) * R_M;
+float X_u_dot = Y_v_dot;
 float Z_w_dot = Y_v_dot;
 
 float K_p_dot = 0;
 float N_r_dot = (-1/5*R_M)* ( R_B*R_B - R_A*R_A)*( R_B*R_B - R_A*R_A)*(alpha_0 - beta_0)/(2*(R_B*R_B - R_A*R_A) + (R_B*R_B + R_A*R_A)*(beta_0 - alpha_0));
 float M_q_dot = (-1/5*R_M)* ( R_B*R_B - R_A*R_A)*( R_B*R_B - R_A*R_A)*(alpha_0 - beta_0)/(2*(R_B*R_B - R_A*R_A) + (R_B*R_B + R_A*R_A)*(beta_0 - alpha_0));
 
-float compute_damping(u_int lato, float ni_i)
+float compute_damping(u_int lato, float ni_i) // che area prendiamo nei vari casi? forse quella laterale sempre?
 {
-  float area;
+  float area, b, b1, b2, contr1, contr2;
   switch(lato){
     case 1:
       area = 2 * R_A * 2 * R_B;
       return (-1/2) * RHO_W * area *C_D_X* abs(ni_i);
+    
     case 2:
       area = 2 * R_B * 2 * R_C; 
       return (-1/2) * RHO_W * area *C_D_YZ * abs(ni_i);
+    
+    case 3:
+      area = R_B * 2 * R_C; 
+      b = sqrt(R_A*R_A/4.0 + R_B*R_B/4.0);
+      return (-1/2) * RHO_W * area *C_D_YZ * abs(ni_i)*b*b*b * 2;  // si moltiplica per due per tener conto dei due contributi relativi ai due baricentri "intermedi"
+    
+    case 4:
+      area = 2 * R_A * 2 * R_B;
+      b1 = (R_B + R_B/2.0) /2.0;
+      b2 = R_B / 4.0;
+      contr1 = (-1/2) * RHO_W * area*3/4.0 *C_D_X * abs(ni_i)*b1*b1*b1;
+      contr2 = (-1/2) * RHO_W * area/4.0 *C_D_X * abs(ni_i)*b2*b2*b2;
+      return contr1 + contr2;
+
     default:
       break;
   }
@@ -73,9 +88,9 @@ void updateD(){
   D(0,0) = - compute_damping(1, state.ni_1.x);
   D(1,1) = - compute_damping(2, state.ni_1.y);
   D(2,2) = - compute_damping(2, state.ni_1.z);
-  D(3,3) = - compute_damping(1, state.ni_2.x);
-  D(4,4) = - compute_damping(2, state.ni_2.y);
-  D(5,5) = - compute_damping(2, state.ni_2.z);
+  D(3,3) = - compute_damping(4, state.ni_2.x);
+  D(4,4) = - compute_damping(3, state.ni_2.y);
+  D(5,5) = - compute_damping(3, state.ni_2.z);
 }
 
 void updateC(){
@@ -140,19 +155,21 @@ void resolveDynamics(){
   tau.head(3) = ros2eigen(dyn_force);
   tau.tail(3) = ros2eigen(dyn_torque);
 
-
+  // compute ni
   VectorXf new_ni(6);
-  new_ni = ni + dt * M.inverse() * (tau - C*ni - D*ni - G); 
+  new_ni = ni + dt * M.inverse() * (tau - C*ni - D*ni - G);
+  //  compute eta
   VectorXf new_eta(6);
   new_eta = eta + dt * compute_jacobian_tot(state.eta_2) * ni;
+  //  compute eta_dot_dot
   Vector3f ni1_dot = M.inverse().block<3,3>(0,0) * (tau.head(3) - C.block<3,3>(0,0)*ni1 - D.block<3,3>(0,0)*ni1 - G.head(3));
   Vector3f eta1_dot_dot = compute_jacobian1(state.eta_2) * ni1_dot + compute_jacobian1(state.eta_2)*skew_symmetric(state.ni_2)*ni1;
+  // update state
   state.eta_1_dot_dot = eigen2ros(eta1_dot_dot);
   state.eta_1 = eigen2ros(new_eta.head(3));
   state.eta_2 = eigen2ros(new_eta.tail(3));
   state.ni_1 = eigen2ros(new_ni.head(3));
   state.ni_2 = eigen2ros(new_ni.tail(3));
-
 
   old_time = new_time;
   count++;

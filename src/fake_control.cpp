@@ -16,13 +16,13 @@
 //DEL MSG tau.msg (geometry_msgs/Wrench tau)
 
 modellazione::tau control_tau;
-void inittau (){
-control_tau.tau.force.x= frand(-5,5);
-control_tau.tau.force.y= frand(-5,5);
-control_tau.tau.force.z= frand(-5,5);
-control_tau.tau.torque.x= frand(-5,5);
-control_tau.tau.torque.y= frand(-5,5);
-control_tau.tau.torque.z= frand(-5,5);
+void init_tau (){
+control_tau.tau.force.x= frand(-1,1);
+control_tau.tau.force.y= frand(-1,1);
+control_tau.tau.force.z= frand(-1,1);
+control_tau.tau.torque.x= frand(-1,1);
+control_tau.tau.torque.y= frand(-1,1);
+control_tau.tau.torque.z= frand(-1,1);
 }
 
 
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
   while (ros::ok()){
     
     ros::spinOnce();
-    inittau();
+    init_tau();
 
     control_pub.publish(control_tau);
 
