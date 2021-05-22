@@ -19,6 +19,7 @@ using namespace Eigen;
 geometry_msgs::Vector3 dyn_force;
 geometry_msgs::Vector3 dyn_torque;
 modellazione::state_real state;
+geometry_msgs::Vector3 eta_1_dot_dot;
 
 //calcolo elementi matrici masse aggiunte
 
@@ -56,6 +57,8 @@ MatrixXf M(6,6);
 MatrixXf D(6,6);
 MatrixXf C(6,6);
 VectorXf G(6);
+
+
 
 void initializeM(){
   M(0,0) = R_M - X_u_dot;
@@ -105,19 +108,55 @@ void updateG(){
   G.tail(3) = r_b.cross(f_b);
 }
 
-void resolveDynamics(float test){
-  state.eta_1.x = 0;
-  state.eta_1.y = 50;
-  state.eta_1.z = 50;
-  state.eta_2.x = 0;
-  state.eta_2.y = 0;
-  state.eta_2.z = 0;
-  state.ni_1.x = 1 + test;
-  state.ni_1.y = 2 + test;
-  state.ni_1.z = 3 + test;
-  state.ni_2.x = 0;
-  state.ni_2.y = 0;
-  state.ni_2.z = 0;
+
+
+void resolveDynamics(){
+  static ros::Time old_time;
+  static int count;
+
+  ros::Time new_time = ros::Time::now();
+  double dt;
+  if(count ==0)
+    dt = (1.0/MODEL_FREQUENCY); 
+  else
+    dt = new_time.toSec() - old_time.toSec();
+  std:: cout << dt << std::endl;
+
+  updateD();
+  updateG();
+  updateC();
+
+  Vector3f ni1 = ros2eigen(state.ni_1);
+  Vector3f ni2 = ros2eigen(state.ni_2);
+  Vector3f eta1 = ros2eigen(state.eta_1);
+  Vector3f eta2 = ros2eigen(state.eta_2);
+  VectorXf ni(6);
+  VectorXf eta(6);
+  VectorXf tau(6);
+  ni.head(3) = ni1;
+  ni.tail(3) = ni2;
+  eta.head(3) = eta1;
+  eta.tail(3) = eta2;
+  tau.head(3) = ros2eigen(dyn_force);
+  tau.tail(3) = ros2eigen(dyn_torque);
+
+
+  VectorXf new_ni(6);
+  new_ni = ni + dt * M.inverse() * (tau - C*ni - D*ni - G); 
+  VectorXf new_eta(6);
+  new_eta = eta + dt * compute_jacobian_tot(state.eta_2) * ni;
+  Vector3f ni1_dot = M.inverse().block<3,3>(0,0) * (tau.head(3) - C.block<3,3>(0,0)*ni1 - D.block<3,3>(0,0)*ni1 - G.head(3));
+  Vector3f eta1_dot_dot = compute_jacobian1(state.eta_2) * ni1_dot + compute_jacobian1(state.eta_2)*skew_symmetric(state.ni_2)*ni1;
+  state.eta_1_dot_dot = eigen2ros(eta1_dot_dot);
+  state.eta_1 = eigen2ros(new_eta.head(3));
+  state.eta_2 = eigen2ros(new_eta.tail(3));
+  state.ni_1 = eigen2ros(new_ni.head(3));
+  state.ni_2 = eigen2ros(new_ni.tail(3));
+
+
+  old_time = new_time;
+  count++;
+
 }
 
 
@@ -149,7 +188,7 @@ int main(int argc, char **argv)
   model.getParam("/initial_pose/position/depth",      depth);
   /*----------------------------------------------------------------------*/
 
-  ros::Rate loop_rate(2);
+  ros::Rate loop_rate(MODEL_FREQUENCY);
   
   float count = 1;
 
@@ -171,17 +210,18 @@ int main(int argc, char **argv)
   while (ros::ok()){
     
     ros::spinOnce();
-
-    //passo il parametro per testare la variazione della std_dev del DVL
-    resolveDynamics(test);
-    test += 10;
-    ///////////////////////////////////////////////////////////////////
+    
+    resolveDynamics();
+   
 
     state.prova = count++;
     
-    ROS_INFO("Sto per pubblicare eta1 = [%f %f %f] \n ni1 = [%f %f %f] \n msg numero: %f ",
+    ROS_INFO("Sto per pubblicare eta1 = [%f %f %f] \n ni1 = [%f %f %f] \n eta1_dot_dot= [%f %f %f] \neta2 = [%f %f %f] \n ni2 = [%f %f %f] \n msg numero: %f ",
               state.eta_1.x, state.eta_1.y, state.eta_1.z,
               state.ni_1.x, state.ni_1.y, state.ni_1.z,
+              state.eta_1_dot_dot.x,state.eta_1_dot_dot.y,state.eta_1_dot_dot.z,
+              state.eta_2.x, state.eta_2.y, state.eta_2.z,
+              state.ni_2.x, state.ni_2.y, state.ni_2.z,
               state.prova);
 
     model_pub.publish(state);

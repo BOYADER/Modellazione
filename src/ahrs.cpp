@@ -11,31 +11,13 @@ using namespace Eigen;
 using namespace std;
 
 modellazione::ahrs ahrs_measure;
-Vector3f old_pos(0,0,0);
-Vector3f old_vel(0,0,0);
-Vector3f new_vel(0,0,0);
-Vector3f new_pos(0,0,0);
 
-//TODO: INSERIRE ETA_2_DOT COME PRESO DALLA DINAMICA
 
 
 void ahrs_state_read(const modellazione::state_real& state){
   ahrs_measure.rpy = state.eta_2;
+  ahrs_measure.acc = state.eta_1_dot_dot;
   ahrs_measure.gyro = state.ni_2;
-  new_pos(0) = state.eta_1.x;
-  new_pos(1) = state.eta_1.y;
-  new_pos(2) = state.eta_1.z;
-  
-}
-void compute_measure(){
-
-  new_vel = (new_pos-old_pos);
-  old_pos = new_pos;
-  Vector3f acc = (new_vel - old_vel);
-  ahrs_measure.acc.x = acc(0);
-  ahrs_measure.acc.y = acc(1);
-  ahrs_measure.acc.z = acc(2);
-  old_vel = new_vel;
 }
 
 
@@ -61,13 +43,15 @@ int main(int argc, char **argv){
   while(ros::ok()){
 
   	ros::spinOnce();
-    compute_measure();
     ahrs_measure.rpy.x += rp_distribution(generator);
     ahrs_measure.rpy.y += rp_distribution(generator);
     ahrs_measure.rpy.z += y_distribution(generator);
     ahrs_measure.gyro.x += gyro_distribution(generator);
     ahrs_measure.gyro.y += gyro_distribution(generator);
     ahrs_measure.gyro.z += gyro_distribution(generator);
+    ahrs_measure.acc.x += acc_distribution(generator);
+    ahrs_measure.acc.y += acc_distribution(generator);
+    ahrs_measure.acc.z += acc_distribution(generator);
 
 
     ahrs_pub.publish(ahrs_measure);

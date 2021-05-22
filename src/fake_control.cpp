@@ -8,12 +8,24 @@
 #include <sstream>
 #include "constant.h"
 #include <math.h>
+#include "math_utility.h"
+
 
 
 //QUESTO NODO DEVE SIMULARE LA PUBBLICAZIONE SUL TOPIC "tau"
-//DEL MSG tau.msg (geometry_msgs/Vector3/Wrench tau)
+//DEL MSG tau.msg (geometry_msgs/Wrench tau)
 
 modellazione::tau control_tau;
+void inittau (){
+control_tau.tau.force.x= frand(-5,5);
+control_tau.tau.force.y= frand(-5,5);
+control_tau.tau.force.z= frand(-5,5);
+control_tau.tau.torque.x= frand(-5,5);
+control_tau.tau.torque.y= frand(-5,5);
+control_tau.tau.torque.z= frand(-5,5);
+}
+
+
 
 int main(int argc, char **argv)
 {
@@ -29,6 +41,7 @@ int main(int argc, char **argv)
   while (ros::ok()){
     
     ros::spinOnce();
+    inittau();
 
     control_pub.publish(control_tau);
 

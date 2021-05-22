@@ -27,3 +27,5 @@
 #define G_ACC 9.80665   // gravity acceleration [m/s^2]
 
 
+/* PARAMETRI DI FREQUENZA */
+#define MODEL_FREQUENCY 100 //[Hz]

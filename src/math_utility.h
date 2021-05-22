@@ -116,3 +116,8 @@ Vector2f NEDtoLL_conversion(geometry_msgs::Vector3 eta1, geometry_msgs::Vector3 
 
   return LL;
 }
+
+float frand(float min, float max){
+	float range = rand()/(float )RAND_MAX;
+	return min + range*(max-min);
+}
