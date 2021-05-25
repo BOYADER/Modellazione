@@ -1,13 +1,14 @@
 #include <iostream>
+#include <geometry_msgs/Vector3.h>
+#include <sstream>
 #include "/usr/include/eigen3/Eigen/Dense"
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include <geometry_msgs/Vector3.h>
 #include "modellazione/state_real.h"
 #include "modellazione/tau.h"
-#include <sstream>
 #include "constant.h"
 #include "math_utility.h"
+
 /*  Model node must subscribe /tau topic in order to obtain control actions.
     After solving dynamics differential equations it has to publish on 
     /state_real topic, from which every sensor will subscribe and take the 
@@ -123,12 +124,11 @@ void updateG(){
   Vector3f f_b = J_inv * buoyancy;
   G.head(3) = -(f_g + f_b);
   G.tail(3) = - (r_b.cross(f_b));
-  std::cout << G << std::endl;
 }
 
 
 
-void resolveDynamics(){
+void resolve_dynamics(){
   static ros::Time old_time;
   static int count;
 
@@ -138,7 +138,7 @@ void resolveDynamics(){
     dt = (1.0/MODEL_FREQUENCY); 
   else
     dt = new_time.toSec() - old_time.toSec();
-  std:: cout << dt << std::endl;
+  std:: cout <<"dt = " << dt << std::endl <<std::endl;
 
   updateD();
   updateG();
@@ -173,6 +173,9 @@ void resolveDynamics(){
   state.eta_2 = eigen2ros(new_eta.tail(3));
   state.ni_1 = eigen2ros(new_ni.head(3));
   state.ni_2 = eigen2ros(new_ni.tail(3));
+  //overwater check
+  if (state.eta_1.z < 0)
+  	state.eta_1.z = 0;
 
   old_time = new_time;
   count++;
@@ -192,26 +195,19 @@ void tau_read(const modellazione::tau &wrench){
 int main(int argc, char **argv)   
 {
   ros::init(argc, argv, "model");
-
-  std::cout << "weight = " << robot_weight << std::endl;
-  std::cout << "buoyancy = " << robot_buoyancy << std::endl; 
-  std::cout << weight << std::endl;
-  std::cout << buoyancy << std::endl;
-  std::cout << r_b << std::endl;
-
   ros::NodeHandle model;
 
   ros::Subscriber model_sub = model.subscribe("tau", 1, tau_read);
   ros::Publisher model_pub = model.advertise<modellazione::state_real>("state_real", MAX_QUEUE_LENGTH);
 
   /* Raccolta info su stato iniziale come definito nel file mission.yaml */
-  float yaw, pitch, roll, lat, lon, depth;
-  model.getParam("/initial_pose/orientation/yaw",     yaw);
-  model.getParam("/initial_pose/orientation/pitch",   pitch);
-  model.getParam("/initial_pose/orientation/roll",    roll);
-  model.getParam("/initial_pose/position/latitude",   lat);
-  model.getParam("/initial_pose/position/longitude",  lon);
-  model.getParam("/initial_pose/position/depth",      depth);
+  float yaw0, pitch0, roll0;
+  model.getParam("/initial_pose/orientation/yaw",     yaw0);
+  model.getParam("/initial_pose/orientation/pitch",   pitch0);
+  model.getParam("/initial_pose/orientation/roll",    roll0);
+  state_real.eta_2.x = roll0;  
+  state_real.eta_2.y = pitch0;
+  state_real.eta_2.z = yaw0;
   /*----------------------------------------------------------------------*/
 
   ros::Rate loop_rate(MODEL_FREQUENCY);
@@ -222,28 +218,21 @@ int main(int argc, char **argv)
   std::cout << "eccentricità = " << e << std::endl;
   std::cout << "alpha0 = " << alpha_0 << std::endl;
   std::cout << "beta0 = " << beta_0 << std::endl;
-  std::cout << M << std::endl;
-
-  /* TEST COMPUTE_JACOBIAN */
-  modellazione::state_real test_state;
-  test_state.eta_2.x = M_PI_2/2;
-  test_state.eta_2.y = M_PI_2/2;
-  test_state.eta_2.z = M_PI_2/2;
-  MatrixXf J_tot = compute_jacobian_tot(test_state.eta_2);
-  std::cout <<J_tot << std::endl;
-  float test = 0.5;
+  std::cout << "Matrice di massa:\n" << M << std::endl;
     
   while (ros::ok()){
     
     ros::spinOnce();
     
-    resolveDynamics();
-    std::cout << "MATRICE DI DAMPING: " << D << std::endl;
+    resolve_dynamics();
+    std::cout << "MATRICE DI DAMPING: \n" << D << std::endl << std::endl;
+    std::cout << "MATRICE DI CORIOLIS: \n" << C << std::endl << std::endl;
+    std::cout << "VETTORE G: \n" << G << std::endl << std::endl;
    
 
     state.prova = count++;
     
-    ROS_INFO("Sto per pubblicare eta1 = [%f %f %f] \n ni1 = [%f %f %f] \n eta1_dot_dot= [%f %f %f] \neta2 = [%f %f %f] \n ni2 = [%f %f %f] \n msg numero: %f ",
+    ROS_INFO("Sto per pubblicare \neta1 = [%f %f %f] \nni1 = [%f %f %f] \neta1_dot_dot= [%f %f %f] \neta2 = [%f %f %f] \nni2 = [%f %f %f] \nmsg numero: %f \n",
               state.eta_1.x, state.eta_1.y, state.eta_1.z,
               state.ni_1.x, state.ni_1.y, state.ni_1.z,
               state.eta_1_dot_dot.x,state.eta_1_dot_dot.y,state.eta_1_dot_dot.z,

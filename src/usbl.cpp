@@ -9,7 +9,7 @@
 #include <cmath>
 #include <random>
 
-//TODO: variable frequency 	
+
 
 using namespace Eigen;
 using namespace std;
@@ -17,16 +17,12 @@ using namespace std;
 geometry_msgs::Vector3 eta1, eta2;
 modellazione::usbl usbl_measure; 
 
-float dist; // distanza tra USBL e transponder usata per calcolare RRT
+float dist; // distanza tra USBL e transponder usata per calcolare RTT
 
 void usbl_state_read(const modellazione::state_real &state)
 {
   eta1 = state.eta_1;
   eta2 = state.eta_2;
-
-  /*ROS_INFO("I heard: eta1 = [%f %f %f] \n eta2 =  [%f %f %f] \nmsg numero: %f",
-           eta1.x, eta1.y, eta1.z, eta2.x, eta2.y, eta2.z, state.prova);
-  */
 }
 
 
@@ -80,8 +76,6 @@ int main(int argc, char **argv){
     usbl_measure.pos.x += range_distribution(generator);
     usbl_measure.pos.y += bearing_distribution(generator);
     usbl_measure.pos.z += elevation_distribution(generator);
-
-    cout << "USBL Frequenza variabile?" << endl;
 
   	ros::Rate loop_rate(RTT);
     loop_rate.sleep();

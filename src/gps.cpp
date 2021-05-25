@@ -1,5 +1,4 @@
 #include "ros/ros.h"
-#include "std_msgs/String.h"
 #include "constant.h"
 #include "/usr/include/eigen3/Eigen/Dense"
 #include "modellazione/gps.h"
@@ -24,11 +23,6 @@ void gps_state_read(const modellazione::state_real &state)
   gps_measure.counter++;
 }
 
-void compute_measure(){
-  //TODO: Conversion between NED to LL
-
-
-}
 
 int main(int argc, char **argv){
 
@@ -60,8 +54,7 @@ int main(int argc, char **argv){
   while(ros::ok()){
 
   	ros::spinOnce();
-    //compute_measure();
-
+    
     LL = NEDtoLL_conversion(eta1, pos_0);
     gps_measure.lla.x = LL(0);
     gps_measure.lla.y = LL(1);
