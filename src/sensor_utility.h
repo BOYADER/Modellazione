@@ -3,9 +3,13 @@
 
 using namespace Eigen;
 
+
+
 //PROFONDIMETRO
 #define R_PROFONDIMETRO 0.08 //distanza tra centro di massa e profondimetro [m]
 Vector3f p_depth(0, 0, R_PROFONDIMETRO);
+
+
 
 //DVL
 #define R_DVL_X 0.37 //coordinata x del dvl rispetto alla terna body
@@ -25,6 +29,8 @@ void initialise_R_dvl_body(){
 	R_dvl_body(2,1) = 0;
 	R_dvl_body(2,2) = cos(THETA_DVL);
 }
+
+
 
 
 //USBL: supponiamo inizialmente che terna usbl coincida con terna body

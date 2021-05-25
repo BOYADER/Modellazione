@@ -17,12 +17,12 @@
 
 modellazione::tau control_tau;
 void init_tau (){
-control_tau.tau.force.x= frand(-1,1);
-control_tau.tau.force.y= frand(-1,1);
-control_tau.tau.force.z= frand(-1,1);
-control_tau.tau.torque.x= frand(-1,1);
-control_tau.tau.torque.y= frand(-1,1);
-control_tau.tau.torque.z= frand(-1,1);
+control_tau.tau.force.x= frand(-5,5);
+control_tau.tau.force.y= frand(-5,5);
+control_tau.tau.force.z= frand(-5,5);
+control_tau.tau.torque.x= frand(-5,5);
+control_tau.tau.torque.y= frand(-5,5);
+control_tau.tau.torque.z= frand(-5,5);
 }
 
 
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 
   ros::Publisher control_pub = control.advertise<modellazione::tau>("tau", MAX_QUEUE_LENGTH);
 
-  ros::Rate loop_rate(1);
+  ros::Rate loop_rate(5);
   
     
   while (ros::ok()){

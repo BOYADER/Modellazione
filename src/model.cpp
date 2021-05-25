@@ -33,8 +33,10 @@ float X_u_dot = Y_v_dot;
 float Z_w_dot = Y_v_dot;
 
 float K_p_dot = 0;
-float N_r_dot = (-1/5*R_M)* ( R_B*R_B - R_A*R_A)*( R_B*R_B - R_A*R_A)*(alpha_0 - beta_0)/(2*(R_B*R_B - R_A*R_A) + (R_B*R_B + R_A*R_A)*(beta_0 - alpha_0));
-float M_q_dot = (-1/5*R_M)* ( R_B*R_B - R_A*R_A)*( R_B*R_B - R_A*R_A)*(alpha_0 - beta_0)/(2*(R_B*R_B - R_A*R_A) + (R_B*R_B + R_A*R_A)*(beta_0 - alpha_0));
+float N_r_dot = (-1.0/5*R_M)* ( R_B*R_B - R_A*R_A)*( R_B*R_B - R_A*R_A)*(alpha_0 - beta_0)/(2.0*(R_B*R_B - R_A*R_A) + (R_B*R_B + R_A*R_A)*(beta_0 - alpha_0));
+float M_q_dot = (-1.0/5*R_M)* ( R_B*R_B - R_A*R_A)*( R_B*R_B - R_A*R_A)*(alpha_0 - beta_0)/(2.0*(R_B*R_B - R_A*R_A) + (R_B*R_B + R_A*R_A)*(beta_0 - alpha_0));
+
+
 
 float compute_damping(u_int lato, float ni_i) // che area prendiamo nei vari casi? forse quella laterale sempre?
 {
@@ -42,23 +44,23 @@ float compute_damping(u_int lato, float ni_i) // che area prendiamo nei vari cas
   switch(lato){
     case 1:
       area = 2 * R_A * 2 * R_B;
-      return (-1/2) * RHO_W * area *C_D_X* abs(ni_i);
+      return (-1.0/2) * RHO_W * area *C_D_X* abs(ni_i);
     
     case 2:
       area = 2 * R_B * 2 * R_C; 
-      return (-1/2) * RHO_W * area *C_D_YZ * abs(ni_i);
+      return (-1.0/2) * RHO_W * area *C_D_YZ * abs(ni_i);
     
     case 3:
       area = R_B * 2 * R_C; 
       b = sqrt(R_A*R_A/4.0 + R_B*R_B/4.0);
-      return (-1/2) * RHO_W * area *C_D_YZ * abs(ni_i)*b*b*b * 2;  // si moltiplica per due per tener conto dei due contributi relativi ai due baricentri "intermedi"
+      return (-1.0/2) * RHO_W * area *C_D_YZ * abs(ni_i)*b*b*b * 2;  // si moltiplica per due per tener conto dei due contributi relativi ai due baricentri "intermedi"
     
     case 4:
       area = 2 * R_A * 2 * R_B;
       b1 = (R_B + R_B/2.0) /2.0;
       b2 = R_B / 4.0;
-      contr1 = (-1/2) * RHO_W * area*3/4.0 *C_D_X * abs(ni_i)*b1*b1*b1;
-      contr2 = (-1/2) * RHO_W * area/4.0 *C_D_X * abs(ni_i)*b2*b2*b2;
+      contr1 = (-1.0/2) * RHO_W * area*3/4.0 *C_D_X * abs(ni_i)*b1*b1*b1;
+      contr2 = (-1.0/2) * RHO_W * area/4.0 *C_D_X * abs(ni_i)*b2*b2*b2;
       return contr1 + contr2;
 
     default:
@@ -117,10 +119,11 @@ void updateC(){
 
 void updateG(){
   Matrix3f J_inv = compute_jacobian1(state.eta_2).transpose();
-  Vector3f f_g = J_inv*weight;
-  Vector3f f_b = J_inv*buoyancy;
-  G.head(3) = f_g + f_b;
-  G.tail(3) = r_b.cross(f_b);
+  Vector3f f_g = J_inv * weight;
+  Vector3f f_b = J_inv * buoyancy;
+  G.head(3) = -(f_g + f_b);
+  G.tail(3) = - (r_b.cross(f_b));
+  std::cout << G << std::endl;
 }
 
 
@@ -131,7 +134,7 @@ void resolveDynamics(){
 
   ros::Time new_time = ros::Time::now();
   double dt;
-  if(count ==0)
+  if(count == 0)
     dt = (1.0/MODEL_FREQUENCY); 
   else
     dt = new_time.toSec() - old_time.toSec();
@@ -190,6 +193,12 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "model");
 
+  std::cout << "weight = " << robot_weight << std::endl;
+  std::cout << "buoyancy = " << robot_buoyancy << std::endl; 
+  std::cout << weight << std::endl;
+  std::cout << buoyancy << std::endl;
+  std::cout << r_b << std::endl;
+
   ros::NodeHandle model;
 
   ros::Subscriber model_sub = model.subscribe("tau", 1, tau_read);
@@ -229,6 +238,7 @@ int main(int argc, char **argv)
     ros::spinOnce();
     
     resolveDynamics();
+    std::cout << "MATRICE DI DAMPING: " << D << std::endl;
    
 
     state.prova = count++;

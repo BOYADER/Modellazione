@@ -22,12 +22,12 @@ Vector3f ros2eigen(geometry_msgs::Vector3 v_msg)
 	return v;
 }
 
-float robot_volume= (4/3) * M_PI * R_A * R_B * R_C;
-float robot_weigth= RHO_V * robot_volume * G_ACC;
+float robot_volume= (4.0/3.0) * M_PI * R_A * R_B * R_C;
+float robot_weight= RHO_V * robot_volume * G_ACC;
 float robot_buoyancy = RHO_W * robot_volume * G_ACC;
-Vector3f r_b(0, 0, R_GB);
+Vector3f r_b(0, 0, -R_GB);
 
-Vector3f weight(0, 0, robot_weigth);
+Vector3f weight(0, 0, robot_weight);
 Vector3f buoyancy(0, 0, -robot_buoyancy);
 
 

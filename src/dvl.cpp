@@ -12,7 +12,6 @@
 using namespace Eigen;
 using namespace std;
 
-//TODO: variable variance
 modellazione::dvl dvl_measure;
 double std_dev_x, std_dev_y, std_dev_z;
 
@@ -40,8 +39,6 @@ int main(int argc, char **argv){
   initialise_R_dvl_body();
 
   default_random_engine generator;
-  //NOTA: ASSUMIAMO PER ORA CHE LA STD_DEV (1%) SIA CALCOLATA SU UNA 
-  //VELOCITA' DI RIFERIMENTO DI 2 m/s
   
   ros::Rate loop_rate(1);
 
