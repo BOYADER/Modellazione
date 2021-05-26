@@ -161,6 +161,11 @@ void resolve_dynamics(){
   // compute ni
   VectorXf new_ni(6);
   new_ni = ni + dt * M.inverse() * (tau - C*ni - D*ni - G);
+  std::cout << "tau = \n" << tau << std::endl << std::endl;
+  std::cout << "C*ni = \n" << C*ni << std::endl << std::endl;
+  std::cout << "D*ni = \n" << D*ni << std::endl << std::endl;
+  std::cout << "G = \n" << G << std::endl << std::endl;
+
   //  compute eta
   VectorXf new_eta(6);
   new_eta = eta + dt * compute_jacobian_tot(state.eta_2) * ni;
@@ -174,17 +179,19 @@ void resolve_dynamics(){
   state.ni_1 = eigen2ros(new_ni.head(3));
   state.ni_2 = eigen2ros(new_ni.tail(3));
   //overwater check
-  /*if (state.eta_1.z < 0){
-    //aggiustiamo la posizione
+  if (state.eta_1.z < 0){
+    // Aggiustiamo la posizione
   	state.eta_1.z = 0; 
-    //per aggiustare la velocità dobbiamo passare in terna NED e poi di nuovo in terna body
+    // Per annullare la componente verticale
+    // della velocità dobbiamo passare in terna NED 
+    // e poi di nuovo in terna body
     Vector3f eta1_dot = compute_jacobian1(state.eta_2) * ni1;
     eta1_dot(2) = 0;
     Vector3f ni1_aggiustata = compute_jacobian1(state.eta_2).transpose()*eta1_dot;
     state.ni_1 = eigen2ros(ni1_aggiustata);
-    //aggiustiamo l'accelerazione
+    // Aggiustiamo l'accelerazione
     state.eta_1_dot_dot.z = 0;
-  }*/
+  }
 
   old_time = new_time;
   count++;
@@ -234,9 +241,9 @@ int main(int argc, char **argv)
     ros::spinOnce();
     
     resolve_dynamics();
-    std::cout << "MATRICE DI DAMPING: \n" << D << std::endl << std::endl;
-    std::cout << "MATRICE DI CORIOLIS: \n" << C << std::endl << std::endl;
-    std::cout << "VETTORE G: \n" << G << std::endl << std::endl;
+    //std::cout << "MATRICE DI DAMPING: \n" << D << std::endl << std::endl;
+    //std::cout << "MATRICE DI CORIOLIS: \n" << C << std::endl << std::endl;
+    //std::cout << "VETTORE G: \n" << G << std::endl << std::endl;
    
 
     state.prova = count++;
