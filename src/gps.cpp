@@ -49,7 +49,7 @@ int main(int argc, char **argv){
   pos_0.z = a0;
   ///////////////////////////////////////////////////////////////
 
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(1);
 
   while(ros::ok()){
 

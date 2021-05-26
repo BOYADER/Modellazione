@@ -174,8 +174,17 @@ void resolve_dynamics(){
   state.ni_1 = eigen2ros(new_ni.head(3));
   state.ni_2 = eigen2ros(new_ni.tail(3));
   //overwater check
-  if (state.eta_1.z < 0)
-  	state.eta_1.z = 0;
+  /*if (state.eta_1.z < 0){
+    //aggiustiamo la posizione
+  	state.eta_1.z = 0; 
+    //per aggiustare la velocità dobbiamo passare in terna NED e poi di nuovo in terna body
+    Vector3f eta1_dot = compute_jacobian1(state.eta_2) * ni1;
+    eta1_dot(2) = 0;
+    Vector3f ni1_aggiustata = compute_jacobian1(state.eta_2).transpose()*eta1_dot;
+    state.ni_1 = eigen2ros(ni1_aggiustata);
+    //aggiustiamo l'accelerazione
+    state.eta_1_dot_dot.z = 0;
+  }*/
 
   old_time = new_time;
   count++;
@@ -205,9 +214,9 @@ int main(int argc, char **argv)
   model.getParam("/initial_pose/orientation/yaw",     yaw0);
   model.getParam("/initial_pose/orientation/pitch",   pitch0);
   model.getParam("/initial_pose/orientation/roll",    roll0);
-  state_real.eta_2.x = roll0;  
-  state_real.eta_2.y = pitch0;
-  state_real.eta_2.z = yaw0;
+  state.eta_2.x = roll0;  
+  state.eta_2.y = pitch0;
+  state.eta_2.z = yaw0;
   /*----------------------------------------------------------------------*/
 
   ros::Rate loop_rate(MODEL_FREQUENCY);
