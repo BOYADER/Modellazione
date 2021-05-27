@@ -23,7 +23,6 @@ void gps_state_read(const modellazione::state_real &state)
   gps_measure.counter++;
 }
 
-
 int main(int argc, char **argv){
 
   ros::init(argc, argv, "gps_sensor");
@@ -55,12 +54,12 @@ int main(int argc, char **argv){
 
   	ros::spinOnce();
     
+   	eta1.x += gps_distribution(generator);
+   	eta1.y += gps_distribution(generator);
+    
     LL = NEDtoLL_conversion(eta1, pos_0);
     gps_measure.lla.x = LL(0);
     gps_measure.lla.y = LL(1);
-
-    gps_measure.lla.x += gps_distribution(generator);
-    gps_measure.lla.y += gps_distribution(generator);
 
     gps_pub.publish(gps_measure);
 

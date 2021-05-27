@@ -34,8 +34,8 @@ void compute_measure(){
     dist = p_t.norm();
 
     usbl_measure.pos.x = sqrt(p_t(0)*p_t(0) + p_t(1)*p_t(1) + p_t(2)*p_t(2));    			//range [m]
-    usbl_measure.pos.y = rad2deg( atan2(p_t(1), p_t(0)) );                                  //bearing [deg]
-    usbl_measure.pos.z = rad2deg( atan2(p_t(2), sqrt(p_t(0)*p_t(0) + p_t(1)*p_t(1))) );     //elevation [deg]
+    usbl_measure.pos.y = atan2(p_t(1), p_t(0));                                  			//bearing [rad]
+    usbl_measure.pos.z = atan2(p_t(2), sqrt(p_t(0)*p_t(0) + p_t(1)*p_t(1)));   				//elevation [rad]
 
     usbl_measure.counter++;
 
@@ -60,9 +60,9 @@ int main(int argc, char **argv){
 
   //Generazione rumore
   default_random_engine generator;
-  normal_distribution<double> range_distribution(0, 1e-2);  		 //[m]
-  normal_distribution<double> bearing_distribution(0, 0.1);   		 //[deg]
-  normal_distribution<double> elevation_distribution(0, 0.1); 		 //[deg]
+  normal_distribution<double> range_distribution(0, 1e-2);  		 		 //[m]
+  normal_distribution<double> bearing_distribution(0, deg2rad(0.1));   		 //[rad]
+  normal_distribution<double> elevation_distribution(0, deg2rad(0.1)); 		 //[rad]
   
   ros::Rate loop_rate(RTT);  
   ros::spinOnce();  

@@ -118,6 +118,7 @@ void updateC(){
  
 }
 
+
 void updateG(){
   Matrix3f J_inv = compute_jacobian1(state.eta_2).transpose();
   Vector3f f_g = J_inv * weight;
@@ -126,6 +127,25 @@ void updateG(){
   G.tail(3) = - (r_b.cross(f_b));
 }
 
+
+void overwater_check(Vector3f ni1){
+	if (state.eta_1.z < 0){
+    	// Aggiustiamo la posizione
+  		state.eta_1.z = 0; 
+    	// Per annullare la componente verticale
+    	// della velocità dobbiamo passare in terna NED 
+    	// e poi di nuovo in terna body
+    	Vector3f eta1_dot = compute_jacobian1(state.eta_2) * ni1;
+    	eta1_dot(2) = 0;
+    	Vector3f ni1_checked = compute_jacobian1(state.eta_2).transpose()*eta1_dot;
+    	state.ni_1 = eigen2ros(ni1_checked);
+    	// Aggiustiamo l'accelerazione
+    	state.eta_1_dot_dot.z = 0;
+    	return;
+  	}
+  	else
+  		return;
+}
 
 
 void resolve_dynamics(){
@@ -178,20 +198,8 @@ void resolve_dynamics(){
   state.eta_2 = eigen2ros(new_eta.tail(3));
   state.ni_1 = eigen2ros(new_ni.head(3));
   state.ni_2 = eigen2ros(new_ni.tail(3));
-  //overwater check
-  if (state.eta_1.z < 0){
-    // Aggiustiamo la posizione
-  	state.eta_1.z = 0; 
-    // Per annullare la componente verticale
-    // della velocità dobbiamo passare in terna NED 
-    // e poi di nuovo in terna body
-    Vector3f eta1_dot = compute_jacobian1(state.eta_2) * ni1;
-    eta1_dot(2) = 0;
-    Vector3f ni1_aggiustata = compute_jacobian1(state.eta_2).transpose()*eta1_dot;
-    state.ni_1 = eigen2ros(ni1_aggiustata);
-    // Aggiustiamo l'accelerazione
-    state.eta_1_dot_dot.z = 0;
-  }
+
+  overwater_check(ni1);
 
   old_time = new_time;
   count++;
@@ -206,7 +214,24 @@ void tau_read(const modellazione::tau &wrench){
             dyn_force.x, dyn_force.y, dyn_force.z,
             dyn_torque.x, dyn_torque.y, dyn_torque.z);*/
 }
-        
+
+
+float constrain_angle(double x){
+    x = fmod(x + M_PI, 2*M_PI);
+    if (x < 0)
+        x += 2*M_PI;
+    return x - M_PI;
+}
+
+//NOTA: perdiamo traccia di eventuali giri compiuti dal robot
+void normalize_angles(){
+	state.eta_2.x = constrain_angle(state.eta_2.x);
+	state.eta_2.y = constrain_angle(state.eta_2.y);
+	state.eta_2.z = constrain_angle(state.eta_2.z);
+	return;
+}
+
+
 
 int main(int argc, char **argv)   
 {
@@ -244,7 +269,7 @@ int main(int argc, char **argv)
     //std::cout << "MATRICE DI DAMPING: \n" << D << std::endl << std::endl;
     //std::cout << "MATRICE DI CORIOLIS: \n" << C << std::endl << std::endl;
     //std::cout << "VETTORE G: \n" << G << std::endl << std::endl;
-   
+   	normalize_angles();
 
     state.prova = count++;
     
