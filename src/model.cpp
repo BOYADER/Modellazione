@@ -88,12 +88,12 @@ void initializeM(){
 }
 
 void updateD(){
-  D(0,0) = - compute_damping(1, state.ni_1.x);
-  D(1,1) = - compute_damping(2, state.ni_1.y);
-  D(2,2) = - compute_damping(2, state.ni_1.z);
-  D(3,3) = - compute_damping(4, state.ni_2.x);
-  D(4,4) = - compute_damping(3, state.ni_2.y);
-  D(5,5) = - compute_damping(3, state.ni_2.z);
+  D(0,0) = - 10*compute_damping(1, state.ni_1.x);
+  D(1,1) = - 10*compute_damping(2, state.ni_1.y);
+  D(2,2) = - 10*compute_damping(2, state.ni_1.z);
+  D(3,3) = - 100*compute_damping(4, state.ni_2.x);
+  D(4,4) = - 100*compute_damping(3, state.ni_2.y);
+  D(5,5) = - 100*compute_damping(3, state.ni_2.z);
 }
 
 void updateC(){

@@ -35,7 +35,7 @@ int main(int argc, char **argv){
 
   //Generazione Rumore
   default_random_engine generator;
-  normal_distribution<double> gps_distribution(0, 2); //[m]
+  normal_distribution<double> gps_distribution(0, 1); //[m]
   Vector2f LL;
 
   //DATI NECESSARI PER LA CONVERSIONE NED => LL /////////////////

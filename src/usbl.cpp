@@ -30,12 +30,12 @@ void compute_measure(){
     Vector3f p_t(0, 0, 0); 
     Matrix3f J_inv = compute_jacobian1(eta2).transpose(); //ned to usbl(coincide con body)
 
-    p_t = J_inv * ( p_t_ned - ( ros2eigen(eta1) + J_inv * (p_usbl) ) );
+    p_t = J_inv * ( p_t_ned - ( ros2eigen(eta1) + J_inv * (p_usbl) ) ); //J_inv * p_usbl = 0
     dist = p_t.norm();
 
-    usbl_measure.pos.x = sqrt(p_t(0)*p_t(0) + p_t(1)*p_t(1) + p_t(2)*p_t(2));    //range
-    usbl_measure.pos.y = atan2(p_t(1), p_t(0));                                  //bearing
-    usbl_measure.pos.z = atan2(p_t(2), sqrt(p_t(0)*p_t(0) + p_t(1)*p_t(1)));     //elevation
+    usbl_measure.pos.x = sqrt(p_t(0)*p_t(0) + p_t(1)*p_t(1) + p_t(2)*p_t(2));    			//range [m]
+    usbl_measure.pos.y = rad2deg( atan2(p_t(1), p_t(0)) );                                  //bearing [deg]
+    usbl_measure.pos.z = rad2deg( atan2(p_t(2), sqrt(p_t(0)*p_t(0) + p_t(1)*p_t(1))) );     //elevation [deg]
 
     usbl_measure.counter++;
 
@@ -60,9 +60,9 @@ int main(int argc, char **argv){
 
   //Generazione rumore
   default_random_engine generator;
-  normal_distribution<double> range_distribution(0, 1e-2);  //[m]
-  normal_distribution<double> bearing_distribution(0, 1);   //[deg]
-  normal_distribution<double> elevation_distribution(0, 1); //[deg]
+  normal_distribution<double> range_distribution(0, 1e-2);  		 //[m]
+  normal_distribution<double> bearing_distribution(0, 0.1);   		 //[deg]
+  normal_distribution<double> elevation_distribution(0, 0.1); 		 //[deg]
   
   ros::Rate loop_rate(RTT);  
   ros::spinOnce();  

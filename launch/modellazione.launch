@@ -10,4 +10,5 @@
 	<node name="dvl" 	pkg="modellazione" type="dvl_sensor" output="screen"/>
 	<node name="control" pkg="modellazione" type="fake_control" output="screen"/>
 	<node name="nav" 	pkg="modellazione" type="fake_nav" output="screen"/>
+	<node name="plot"	pkg="rqt_plot" type="rqt_plot"/>
 </launch>

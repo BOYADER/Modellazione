@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include "/usr/include/eigen3/Eigen/Dense"
+#include <geometry_msgs/Vector3.h>
 #include <cmath>
 
 #define A 6378137.0
@@ -96,10 +97,15 @@ Matrix3f skew_symmetric(geometry_msgs::Vector3 ni2){
 	return S;
 }
 
-//CONVERSIONE DEGREE2RAD
-float deg2rad(float rad){
-  float degree = rad * M_PI /180;
-  return degree;
+//CONVERSIONE DEG <=> RAD
+float deg2rad(float degree){
+  float rad = degree * M_PI /180;
+  return rad;
+}
+
+float rad2deg(float rad){
+	float degree = rad * 180 / M_PI;
+	return degree;
 }
 
 //CONVERSIONE NED2LLA

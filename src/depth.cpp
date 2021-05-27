@@ -17,7 +17,7 @@ void depth_state_read(const modellazione::state_real &state)
 {
   //NON E' STATA SUPPOSTA ALCUNA SEMPLIFICAZIONE RIGUARDO POSIZIONE DEL PROFONDIMETRO
   Matrix3f J_inv = compute_jacobian1(state.eta_2).transpose();
-  float p_depth_z = (J_inv*p_depth)(2);
+  float p_depth_z = (J_inv * p_depth)(2);
   depth_measure.z = state.eta_1.z + p_depth_z; 
   depth_measure.counter++;         
 }

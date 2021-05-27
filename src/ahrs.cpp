@@ -1,6 +1,7 @@
 #include "/usr/include/eigen3/Eigen/Dense"
 #include "ros/ros.h"
 #include "constant.h"
+#include "math_utility.h"
 #include "geometry_msgs/Vector3.h"
 #include "modellazione/state_real.h"
 #include "modellazione/ahrs.h"
@@ -30,11 +31,10 @@ int main(int argc, char **argv){
   ros::Publisher ahrs_pub = ahrs_sensor.advertise<modellazione::ahrs>("sensor/ahrs", MAX_QUEUE_LENGTH);
 
   default_random_engine generator;
-  normal_distribution<double> rp_distribution(0, 0.3);    //[deg]
-  normal_distribution<double> y_distribution(0, 1);       //[deg]
-  normal_distribution<double> gyro_distribution(0, 0);    //incognita
-  normal_distribution<double> acc_distribution(0, 0);     //incognita
-  float acc_bias = 0;
+  normal_distribution<double> rp_distribution(0, deg2rad(0.03));    //[rad]
+  normal_distribution<double> y_distribution(0, deg2rad(1));        //[rad]
+  normal_distribution<double> gyro_distribution(0, 0.1);    		//[rad/s] PROVVISORIA
+
   float gyro_bias = 0;
 
   ros::Rate loop_rate(SENSOR_FREQUENCY);
@@ -51,10 +51,6 @@ int main(int argc, char **argv){
     ahrs_measure.gyro.x += gyro_distribution(generator) + gyro_bias;
     ahrs_measure.gyro.y += gyro_distribution(generator) + gyro_bias;
     ahrs_measure.gyro.z += gyro_distribution(generator) + gyro_bias;
-    ahrs_measure.acc.x += acc_distribution(generator) + acc_bias;
-    ahrs_measure.acc.y += acc_distribution(generator) + acc_bias;
-    ahrs_measure.acc.z += acc_distribution(generator) + acc_bias;
-
 
     ahrs_pub.publish(ahrs_measure);
 

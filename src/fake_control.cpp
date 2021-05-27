@@ -47,10 +47,9 @@ int main(int argc, char **argv)
       
     control_pub.publish(control_tau);
 
-    //ros::spinOnce();
 
     loop_rate.sleep();
-   // count++;
+    count++;
   }
 
 return 0;
