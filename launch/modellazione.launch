@@ -2,6 +2,7 @@
 	<rosparam file = "$(find modellazione)/config/mission.yaml"/>
 	<rosparam file = "$(find modellazione)/config/constant.yaml"/>
 	
+	<node name="plot"	pkg="rqt_plot" type="rqt_plot"/>
 	<node name ="model" pkg="modellazione" type="model" output="screen"/>
 	<node name="ahrs" 	pkg="modellazione" type="ahrs_sensor" output="screen"/>
 	<node name="depth" 	pkg="modellazione" type="depth_sensor" output="screen"/>
@@ -10,5 +11,5 @@
 	<node name="dvl" 	pkg="modellazione" type="dvl_sensor" output="screen"/>
 	<node name="control" pkg="modellazione" type="fake_control" output="screen"/>
 	<node name="nav" 	pkg="modellazione" type="fake_nav" output="screen"/>
-	<node name="plot"	pkg="rqt_plot" type="rqt_plot"/>
+
 </launch>

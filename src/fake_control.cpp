@@ -37,11 +37,12 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(5);
   int count = 0;
-    
+  init_tau();
+
   while (ros::ok()){
     
     ros::spinOnce();
-    init_tau();
+    //init_tau();
     if (count > 5)
       control_tau.tau.torque.x = 0;
       

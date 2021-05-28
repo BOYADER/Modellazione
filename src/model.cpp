@@ -69,6 +69,11 @@ float compute_damping(u_int lato, float ni_i) // che area prendiamo nei vari cas
   }
 }
 
+void test_damping(){
+	std::cout << "damping angolare roll: " << compute_damping(4, 1) << std::endl;
+	std::cout << "damping angolare pitch-yaw: " << compute_damping(3, 1) << std::endl;
+}
+
 // matrici della dinamica 
 
 MatrixXf M(6,6);
@@ -260,6 +265,7 @@ int main(int argc, char **argv)
   std::cout << "alpha0 = " << alpha_0 << std::endl;
   std::cout << "beta0 = " << beta_0 << std::endl;
   std::cout << "Matrice di massa:\n" << M << std::endl;
+  //test_damping();
     
   while (ros::ok()){
     
