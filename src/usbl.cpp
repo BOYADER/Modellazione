@@ -42,10 +42,15 @@ void compute_measure(){
 }
 
 
-int compute_frequency(){
+float compute_frequency(){
   return V_C/(2*dist);
 }
 
+void normalize_angles(){
+  usbl_measure.pos.y = constrain_angle(usbl_measure.pos.y);
+  usbl_measure.pos.z = constrain_angle(usbl_measure.pos.z);
+	return;
+}
 
 int main(int argc, char **argv){
 
@@ -56,11 +61,11 @@ int main(int argc, char **argv){
   ros::Subscriber usbl_sub = usbl_sensor.subscribe("state_real", 1, usbl_state_read);
   ros::Publisher usbl_pub = usbl_sensor.advertise<modellazione::usbl>("sensor/usbl", MAX_QUEUE_LENGTH);
 
-  int RTT = 1;
+  float RTT = 1;
 
   //Generazione rumore
   default_random_engine generator;
-  normal_distribution<double> range_distribution(0, 1e-2);  		 		 //[m]
+  normal_distribution<double> range_distribution(0, 1e-2);  		 		       //[m]
   normal_distribution<double> bearing_distribution(0, deg2rad(0.1));   		 //[rad]
   normal_distribution<double> elevation_distribution(0, deg2rad(0.1)); 		 //[rad]
   
@@ -76,10 +81,12 @@ int main(int argc, char **argv){
     usbl_measure.pos.x += range_distribution(generator);
     usbl_measure.pos.y += bearing_distribution(generator);
     usbl_measure.pos.z += elevation_distribution(generator);
+    normalize_angles();
 
   	ros::Rate loop_rate(RTT);
     loop_rate.sleep();
-    //ROS_INFO("sto per pubblicare: rbe = \n [%f \n %f \n %f] \n",usbl_measure.pos.x, usbl_measure.pos.y, usbl_measure.pos.z);
+    ROS_INFO("[USBL] Sto per pubblicare: rbe = \n [%f \n %f \n %f] \n",usbl_measure.pos.x, usbl_measure.pos.y, usbl_measure.pos.z);
+    std::cout << "RTT = " << RTT<<endl<<endl;
     usbl_pub.publish(usbl_measure);
 
   }

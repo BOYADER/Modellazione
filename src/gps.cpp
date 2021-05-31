@@ -61,6 +61,7 @@ int main(int argc, char **argv){
     gps_measure.lla.x = LL(0);
     gps_measure.lla.y = LL(1);
 
+    ROS_INFO("[GPS] Sto per pubblicare: lat = %f long = %f",gps_measure.lla.x, gps_measure.lla.y);
     gps_pub.publish(gps_measure);
 
     loop_rate.sleep();

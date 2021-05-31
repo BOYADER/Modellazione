@@ -35,7 +35,7 @@ void initialise_R_dvl_body(){
 //#define R_USBL_Z 0.08 //[m]; l'usbl si trova sotto il centro di massa, sulla base del veicolo
 
 #define R_USBL_Z 0.0   //usbl nel centro di massa
-#define R_T 50        //[m]; profondita' del transponder 
+#define R_T 50.0         //[m]; profondita' del transponder 
 Vector3f p_usbl(0, 0, R_USBL_Z);
 Vector3f p_t_ned(0, 0, R_T); //vettore che rappresenta la posizione del transponder
 							 //espresso in terna NED

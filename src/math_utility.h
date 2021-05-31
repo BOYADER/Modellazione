@@ -108,6 +108,13 @@ float rad2deg(float rad){
 	return degree;
 }
 
+// MAPPATURA ANGOLI IN (-PI, +PI)
+float constrain_angle(double x){
+    x = fmod(x + M_PI, 2*M_PI);
+    if (x < 0)
+        x += 2*M_PI;
+    return x - M_PI;
+}
 //CONVERSIONE NED2LLA
 Vector2f NEDtoLL_conversion(geometry_msgs::Vector3 eta1, geometry_msgs::Vector3 lla0){
   Vector3f eta_1 = ros2eigen(eta1);

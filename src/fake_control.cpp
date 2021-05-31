@@ -19,8 +19,8 @@ modellazione::tau control_tau;
 void init_tau (){
 control_tau.tau.force.x = 0;// frand(-5,5);
 control_tau.tau.force.y = 0;// frand(-5,5);
-control_tau.tau.force.z = 0;// frand(-5,5);
-control_tau.tau.torque.x = 50;//frand(-5,5);
+control_tau.tau.force.z = 500;// frand(-5,5);
+control_tau.tau.torque.x = 0;//frand(-5,5);
 control_tau.tau.torque.y = 0;//frand(-5,5);
 control_tau.tau.torque.z = 0;//frand(-5,5);
 }

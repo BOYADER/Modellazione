@@ -70,8 +70,8 @@ float compute_damping(u_int lato, float ni_i) // che area prendiamo nei vari cas
 }
 
 void test_damping(){
-	std::cout << "damping angolare roll: " << compute_damping(4, 1) << std::endl;
-	std::cout << "damping angolare pitch-yaw: " << compute_damping(3, 1) << std::endl;
+	/*std::cout << "damping angolare roll: " << compute_damping(4, 1) << std::endl;
+	std::cout << "damping angolare pitch-yaw: " << compute_damping(3, 1) << std::endl;*/
 }
 
 // matrici della dinamica 
@@ -163,7 +163,7 @@ void resolve_dynamics(){
     dt = (1.0/MODEL_FREQUENCY); 
   else
     dt = new_time.toSec() - old_time.toSec();
-  std:: cout <<"dt = " << dt << std::endl <<std::endl;
+  //std:: cout <<"dt = " << dt << std::endl <<std::endl;
 
   updateD();
   updateG();
@@ -186,10 +186,10 @@ void resolve_dynamics(){
   // compute ni
   VectorXf new_ni(6);
   new_ni = ni + dt * M.inverse() * (tau - C*ni - D*ni - G);
-  std::cout << "tau = \n" << tau << std::endl << std::endl;
+  /*std::cout << "tau = \n" << tau << std::endl << std::endl;
   std::cout << "C*ni = \n" << C*ni << std::endl << std::endl;
   std::cout << "D*ni = \n" << D*ni << std::endl << std::endl;
-  std::cout << "G = \n" << G << std::endl << std::endl;
+  std::cout << "G = \n" << G << std::endl << std::endl;*/
 
   //  compute eta
   VectorXf new_eta(6);
@@ -220,13 +220,6 @@ void tau_read(const modellazione::tau &wrench){
             dyn_torque.x, dyn_torque.y, dyn_torque.z);*/
 }
 
-
-float constrain_angle(double x){
-    x = fmod(x + M_PI, 2*M_PI);
-    if (x < 0)
-        x += 2*M_PI;
-    return x - M_PI;
-}
 
 //NOTA: perdiamo traccia di eventuali giri compiuti dal robot
 void normalize_angles(){
@@ -261,10 +254,10 @@ int main(int argc, char **argv)
   float count = 1;
 
   initializeM();
-  std::cout << "eccentricità = " << e << std::endl;
+  /*std::cout << "eccentricità = " << e << std::endl;
   std::cout << "alpha0 = " << alpha_0 << std::endl;
   std::cout << "beta0 = " << beta_0 << std::endl;
-  std::cout << "Matrice di massa:\n" << M << std::endl;
+  std::cout << "Matrice di massa:\n" << M << std::endl;*/
   //test_damping();
     
   while (ros::ok()){
@@ -279,13 +272,13 @@ int main(int argc, char **argv)
 
     state.prova = count++;
     
-    ROS_INFO("Sto per pubblicare \neta1 = [%f %f %f] \nni1 = [%f %f %f] \neta1_dot_dot= [%f %f %f] \neta2 = [%f %f %f] \nni2 = [%f %f %f] \nmsg numero: %f \n",
+   /* ROS_INFO("Sto per pubblicare \neta1 = [%f %f %f] \nni1 = [%f %f %f] \neta1_dot_dot= [%f %f %f] \neta2 = [%f %f %f] \nni2 = [%f %f %f] \nmsg numero: %f \n",
               state.eta_1.x, state.eta_1.y, state.eta_1.z,
               state.ni_1.x, state.ni_1.y, state.ni_1.z,
               state.eta_1_dot_dot.x,state.eta_1_dot_dot.y,state.eta_1_dot_dot.z,
               state.eta_2.x, state.eta_2.y, state.eta_2.z,
               state.ni_2.x, state.ni_2.y, state.ni_2.z,
-              state.prova);
+              state.prova);*/
 
     model_pub.publish(state);
 
