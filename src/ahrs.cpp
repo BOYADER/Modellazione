@@ -33,7 +33,7 @@ int main(int argc, char **argv){
   default_random_engine generator;
   normal_distribution<double> rp_distribution(0, deg2rad(0.03));    //[rad]
   normal_distribution<double> y_distribution(0, deg2rad(1));        //[rad]
-  normal_distribution<double> gyro_distribution(0, 0.1);    		//[rad/s] PROVVISORIA
+  normal_distribution<double> gyro_distribution(0, 0.1);        		//[rad/s] PROVVISORIA
 
   float gyro_bias = 0;
 
@@ -52,6 +52,9 @@ int main(int argc, char **argv){
     ahrs_measure.gyro.y += gyro_distribution(generator) + gyro_bias;
     ahrs_measure.gyro.z += gyro_distribution(generator) + gyro_bias;
 
+    ROS_INFO("[AHRS]Sto per pubblicare \ngyro = [%f %f %f] \nahrs= [%f %f %f]\n",
+            ahrs_measure.gyro.x, ahrs_measure.gyro.y, ahrs_measure.gyro.z,
+            ahrs_measure.rpy.x, ahrs_measure.rpy.y, ahrs_measure.rpy.z);
     ahrs_pub.publish(ahrs_measure);
 
     loop_rate.sleep();

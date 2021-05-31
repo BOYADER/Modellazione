@@ -53,8 +53,8 @@ int main(int argc, char **argv){
     dvl_measure.lin_vel.y += dvl_distribution_y(generator);
     dvl_measure.lin_vel.z += dvl_distribution_z(generator);
 
-    ROS_INFO("[DVL] Sto per pubblicare misura dvl: \n x = [%f] \n y = [%f] \n z = [%f] ", 
-              dvl_measure.lin_vel.x, dvl_measure.lin_vel.y, dvl_measure.lin_vel.z);
+    //ROS_INFO("[DVL] Sto per pubblicare misura dvl: \n x = [%f] \n y = [%f] \n z = [%f] ", 
+    //          dvl_measure.lin_vel.x, dvl_measure.lin_vel.y, dvl_measure.lin_vel.z);
 
     dvl_pub.publish(dvl_measure);
 

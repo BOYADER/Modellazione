@@ -272,13 +272,13 @@ int main(int argc, char **argv)
 
     state.prova = count++;
     
-   /* ROS_INFO("Sto per pubblicare \neta1 = [%f %f %f] \nni1 = [%f %f %f] \neta1_dot_dot= [%f %f %f] \neta2 = [%f %f %f] \nni2 = [%f %f %f] \nmsg numero: %f \n",
+    ROS_INFO("Sto per pubblicare \neta1 = [%f %f %f] \nni1 = [%f %f %f] \neta1_dot_dot= [%f %f %f] \neta2 = [%f %f %f] \nni2 = [%f %f %f] \nmsg numero: %f \n",
               state.eta_1.x, state.eta_1.y, state.eta_1.z,
               state.ni_1.x, state.ni_1.y, state.ni_1.z,
               state.eta_1_dot_dot.x,state.eta_1_dot_dot.y,state.eta_1_dot_dot.z,
               state.eta_2.x, state.eta_2.y, state.eta_2.z,
               state.ni_2.x, state.ni_2.y, state.ni_2.z,
-              state.prova);*/
+              state.prova);
 
     model_pub.publish(state);
 
