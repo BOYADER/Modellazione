@@ -33,7 +33,7 @@ int main(int argc, char **argv){
   default_random_engine generator;
   normal_distribution<double> rp_distribution(0, deg2rad(0.03));    //[rad]
   normal_distribution<double> y_distribution(0, deg2rad(1));        //[rad]
-  normal_distribution<double> gyro_distribution(0, 0.1);        		//[rad/s] PROVVISORIA
+  normal_distribution<double> gyro_distribution(0, 0.01);      		 //[rad/s] 
 
   float gyro_bias = 0;
 

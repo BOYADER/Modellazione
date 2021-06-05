@@ -93,12 +93,12 @@ void initializeM(){
 }
 
 void updateD(){
-  D(0,0) = - 10*compute_damping(1, state.ni_1.x);
-  D(1,1) = - 10*compute_damping(2, state.ni_1.y);
-  D(2,2) = - 10*compute_damping(2, state.ni_1.z);
-  D(3,3) = - 100*compute_damping(4, state.ni_2.x);
-  D(4,4) = - 100*compute_damping(3, state.ni_2.y);
-  D(5,5) = - 100*compute_damping(3, state.ni_2.z);
+  D(0,0) = - compute_damping(1, state.ni_1.x) + 10;
+  D(1,1) = - compute_damping(2, state.ni_1.y) + 10;
+  D(2,2) = - compute_damping(2, state.ni_1.z) + 0.1;
+  D(3,3) = - 100*compute_damping(4, state.ni_2.x) + 1.0;
+  D(4,4) = - 100*compute_damping(3, state.ni_2.y) + 0.02;
+  D(5,5) = - 100*compute_damping(3, state.ni_2.z) + 0.2;
 }
 
 void updateC(){
@@ -247,6 +247,7 @@ int main(int argc, char **argv)
   state.eta_2.x = roll0;  
   state.eta_2.y = pitch0;
   state.eta_2.z = yaw0;
+  //state.eta_1.z = 0.07;
   /*----------------------------------------------------------------------*/
 
   ros::Rate loop_rate(MODEL_FREQUENCY);
