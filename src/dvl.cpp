@@ -20,9 +20,9 @@ void dvl_state_read(const modellazione::state_real &state)
   Matrix3f S = skew_symmetric(state.ni_2);
   dvl_measure.lin_vel = eigen2ros( R_dvl_body *(ni1 + S*p_dvl) ); 
   dvl_measure.counter++; 
-  std_dev_x = 0.01 * ni1(0);
-  std_dev_y = 0.01 * ni1(1);
-  std_dev_z = 0.01 * ni1(2);
+  std_dev_x = 0.01 * ni1(0) + 0.01;
+  std_dev_y = 0.01 * ni1(1) + 0.01;
+  std_dev_z = 0.01 * ni1(2) + 0.01;
 }
 
 
