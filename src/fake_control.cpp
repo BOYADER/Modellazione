@@ -43,10 +43,11 @@ int main(int argc, char **argv)
     
     ros::spinOnce();
     //init_tau();
-    if ((count > 10 && count <= 15) || (count > 200 && count <= 220))
-      control_tau.tau.force.z = 100;
+    //if ((count > 10 && count <= 15) || (count > 200 && count <= 220))
+    if(count > 10 && count <= 15)
+      control_tau.tau.force.x = 100;
     else
-      control_tau.tau.force.z= 0;
+      control_tau.tau.force.x = 0;
       
     control_pub.publish(control_tau);
 
