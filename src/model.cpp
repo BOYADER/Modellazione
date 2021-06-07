@@ -22,7 +22,7 @@ geometry_msgs::Vector3 dyn_torque;
 modellazione::state_real state;
 geometry_msgs::Vector3 eta_1_dot_dot;
 
-//calcolo elementi matrici masse aggiunte
+//added mass matrix elements
 
 float e = 1 - (R_B/R_A) * (R_B/R_A);
 float alpha_0 = 2 * (1 - e * e) * ( 0.5 * log((1 + e) / (1 - e)) - e) / (e * e * e);
@@ -39,7 +39,7 @@ float M_q_dot = (-1.0/5*R_M)* ( R_B*R_B - R_A*R_A)*( R_B*R_B - R_A*R_A)*(alpha_0
 
 
 
-float compute_damping(u_int lato, float ni_i) // che area prendiamo nei vari casi? forse quella laterale sempre?
+float compute_damping(u_int lato, float ni_i) 
 {
   float area, b, b1, b2, contr1, contr2;
   switch(lato){
@@ -54,7 +54,7 @@ float compute_damping(u_int lato, float ni_i) // che area prendiamo nei vari cas
     case 3:
       area = R_B * 2 * R_C; 
       b = sqrt(R_A*R_A/4.0 + R_B*R_B/4.0);
-      return (-1.0/2) * RHO_W * area *C_D_YZ * abs(ni_i)*b*b*b * 2;  // si moltiplica per due per tener conto dei due contributi relativi ai due baricentri "intermedi"
+      return (-1.0/2) * RHO_W * area *C_D_YZ * abs(ni_i)*b*b*b * 2;  
     
     case 4:
       area = 2 * R_A * 2 * R_B;
@@ -69,12 +69,9 @@ float compute_damping(u_int lato, float ni_i) // che area prendiamo nei vari cas
   }
 }
 
-void test_damping(){
-	/*std::cout << "damping angolare roll: " << compute_damping(4, 1) << std::endl;
-	std::cout << "damping angolare pitch-yaw: " << compute_damping(3, 1) << std::endl;*/
-}
 
-// matrici della dinamica 
+
+// dynamic matrices
 
 MatrixXf M(6,6);
 MatrixXf D(6,6);
@@ -95,10 +92,10 @@ void initializeM(){
 void updateD(){
   D(0,0) = - compute_damping(1, state.ni_1.x) + 10;
   D(1,1) = - compute_damping(2, state.ni_1.y) + 10;
-  D(2,2) = - compute_damping(2, state.ni_1.z) + 0.1;
-  D(3,3) = - 100*compute_damping(4, state.ni_2.x) + 1.0;
-  D(4,4) = - 100*compute_damping(3, state.ni_2.y) + 0.02;
-  D(5,5) = - 100*compute_damping(3, state.ni_2.z) + 0.2;
+  D(2,2) = - compute_damping(2, state.ni_1.z) + 10;
+  D(3,3) = - 10*compute_damping(4, state.ni_2.x) + 1.0;
+  D(4,4) = - 10*compute_damping(3, state.ni_2.y) + 0.5;
+  D(5,5) = - 10*compute_damping(3, state.ni_2.z) + 0.5;
 }
 
 void updateC(){
@@ -127,7 +124,11 @@ void updateC(){
 void updateG(){
   Matrix3f J_inv = compute_jacobian1(state.eta_2).transpose();
   Vector3f f_g = J_inv * weight;
-  Vector3f f_b = J_inv * buoyancy;
+  Vector3f f_b;
+/*  if(state.eta_1.z <= 0)
+    f_b = - f_g;
+  else*/
+  f_b = J_inv * buoyancy;
   G.head(3) = -(f_g + f_b);
   G.tail(3) = - (r_b.cross(f_b));
 }
@@ -135,16 +136,18 @@ void updateG(){
 
 void overwater_check(Vector3f ni1){
 	if (state.eta_1.z < 0){
-    	// Aggiustiamo la posizione
+    	// fixing position
   		state.eta_1.z = 0; 
-    	// Per annullare la componente verticale
-    	// della velocità dobbiamo passare in terna NED 
-    	// e poi di nuovo in terna body
+
+    	// in order to set vertical velocity component to zero
+    	// we have to change reference frame to NED 
+    	// and then again to body
     	Vector3f eta1_dot = compute_jacobian1(state.eta_2) * ni1;
     	eta1_dot(2) = 0;
     	Vector3f ni1_checked = compute_jacobian1(state.eta_2).transpose()*eta1_dot;
     	state.ni_1 = eigen2ros(ni1_checked);
-    	// Aggiustiamo l'accelerazione
+
+    	// fixing acceleration
     	state.eta_1_dot_dot.z = 0;
     	return;
   	}
@@ -163,7 +166,6 @@ void resolve_dynamics(){
     dt = (1.0/MODEL_FREQUENCY); 
   else
     dt = new_time.toSec() - old_time.toSec();
-  //std:: cout <<"dt = " << dt << std::endl <<std::endl;
 
   updateD();
   updateG();
@@ -186,17 +188,15 @@ void resolve_dynamics(){
   // compute ni
   VectorXf new_ni(6);
   new_ni = ni + dt * M.inverse() * (tau - C*ni - D*ni - G);
-  /*std::cout << "tau = \n" << tau << std::endl << std::endl;
-  std::cout << "C*ni = \n" << C*ni << std::endl << std::endl;
-  std::cout << "D*ni = \n" << D*ni << std::endl << std::endl;
-  std::cout << "G = \n" << G << std::endl << std::endl;*/
 
   //  compute eta
   VectorXf new_eta(6);
   new_eta = eta + dt * compute_jacobian_tot(state.eta_2) * ni;
+
   //  compute eta_dot_dot
   Vector3f ni1_dot = M.inverse().block<3,3>(0,0) * (tau.head(3) - C.block<3,3>(0,0)*ni1 - D.block<3,3>(0,0)*ni1 - G.head(3));
   Vector3f eta1_dot_dot = compute_jacobian1(state.eta_2) * ni1_dot + compute_jacobian1(state.eta_2)*skew_symmetric(state.ni_2)*ni1;
+
   // update state
   state.eta_1_dot_dot = eigen2ros(eta1_dot_dot);
   state.eta_1 = eigen2ros(new_eta.head(3));
@@ -215,9 +215,6 @@ void resolve_dynamics(){
 void tau_read(const modellazione::tau &wrench){
   dyn_force = wrench.tau.force;
   dyn_torque = wrench.tau.torque;
-  /*ROS_INFO("I heard force = [%f %f %f] \n torque = [%f %f %f] \n", 
-            dyn_force.x, dyn_force.y, dyn_force.z,
-            dyn_torque.x, dyn_torque.y, dyn_torque.z);*/
 }
 
 
@@ -247,7 +244,6 @@ int main(int argc, char **argv)
   state.eta_2.x = roll0;  
   state.eta_2.y = pitch0;
   state.eta_2.z = yaw0;
-  //state.eta_1.z = 0.07;
   /*----------------------------------------------------------------------*/
 
   ros::Rate loop_rate(MODEL_FREQUENCY);
@@ -255,20 +251,23 @@ int main(int argc, char **argv)
   float count = 1;
 
   initializeM();
+
   /*std::cout << "eccentricità = " << e << std::endl;
   std::cout << "alpha0 = " << alpha_0 << std::endl;
   std::cout << "beta0 = " << beta_0 << std::endl;
-  std::cout << "Matrice di massa:\n" << M << std::endl;*/
-  //test_damping();
+  std::cout << "Matrice di massa:\n" << M << std::endl;
+  */
     
   while (ros::ok()){
     
     ros::spinOnce();
     
     resolve_dynamics();
-    //std::cout << "MATRICE DI DAMPING: \n" << D << std::endl << std::endl;
-    //std::cout << "MATRICE DI CORIOLIS: \n" << C << std::endl << std::endl;
-    //std::cout << "VETTORE G: \n" << G << std::endl << std::endl;
+    /*std::cout << "MATRICE DI DAMPING: \n" << D << std::endl << std::endl;
+    std::cout << "MATRICE DI CORIOLIS: \n" << C << std::endl << std::endl;
+    std::cout << "VETTORE G: \n" << G << std::endl << std::endl;
+    */
+
    	normalize_angles();
 
     state.prova = count++;
