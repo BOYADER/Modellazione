@@ -1,7 +1,5 @@
 <launch>
-	<rosparam file = "$(find modellazione)/config/mission.yaml"/>
-	<rosparam file = "$(find modellazione)/config/constant.yaml"/>
-	
+	<rosparam file = "$(find modellazione)/config/mission.yaml"/>	
 	
 	<node name ="model"   pkg="modellazione" type="model" output="screen"/>
 	<node name="ahrs" 	  pkg="modellazione" type="ahrs_sensor" output="screen"/>
