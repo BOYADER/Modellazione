@@ -8,6 +8,7 @@
 
 using namespace Eigen;
 
+// Questa funzione permette di passare da un Vector3 di ROS a un Vector3f di Eigen
 geometry_msgs::Vector3 eigen2ros(Vector3f v)
 {
 	geometry_msgs::Vector3 v_msg;
@@ -17,23 +18,22 @@ geometry_msgs::Vector3 eigen2ros(Vector3f v)
 	return v_msg;
 }
 
+// Questa funzione permette di passare da un Vector3f di Eigen a un Vector3 di ROS
 Vector3f ros2eigen(geometry_msgs::Vector3 v_msg)
 {
 	Vector3f v(v_msg.x, v_msg.y, v_msg.z);
 	return v;
 }
 
-float robot_volume= (4.0/3.0) * M_PI * R_A * R_B * R_C;
-float robot_weight= RHO_V * robot_volume * G_ACC;
-float robot_buoyancy = RHO_W * robot_volume * G_ACC;
-Vector3f r_b(0, 0, -R_GB);
+float robot_volume = (4.0/3.0) * M_PI * R_A * R_B * R_C; // volume del robot [m^3]
+float robot_weight = RHO_V * robot_volume * G_ACC;	 // forza peso del robot [N]
+float robot_buoyancy = RHO_W * robot_volume * G_ACC;	 // forza di galleggiamento [N]
+Vector3f r_b(0, 0, -R_GB);			// vettore posizione del centro geometrico in terna body
+Vector3f weight(0, 0, robot_weight);		// vettore forza peso in terna body
+Vector3f buoyancy(0, 0, -robot_buoyancy);	// vettore forza di galleggiamento in terna body
 
-Vector3f weight(0, 0, robot_weight);
-Vector3f buoyancy(0, 0, -robot_buoyancy);
 
-
-//Returns kinematics Jacobian
-
+// Questa funzione restituisce la parte lneare del Jacobiano geometrico (3x3)
 Matrix3f compute_jacobian1(geometry_msgs::Vector3 eta2){
 	Vector3f eta_2 = ros2eigen(eta2);
 	Matrix3f J_1(3, 3); 
@@ -50,8 +50,7 @@ Matrix3f compute_jacobian1(geometry_msgs::Vector3 eta2){
 	return J_1;
 
 }
-
-//Returns angular velocity Jacobian
+// Questa funzione restituisce la parte angolare del Jacobiano geometrico (3x3)
 Matrix3f compute_jacobian2(geometry_msgs::Vector3 eta2){
 	Vector3f eta_2 = ros2eigen(eta2);
 	Matrix3f J_2(3, 3); 
@@ -69,6 +68,7 @@ Matrix3f compute_jacobian2(geometry_msgs::Vector3 eta2){
 
 }
 
+// Questa funzione restituisce il Jacobiano geometrico completo (6x6)
 MatrixXf compute_jacobian_tot(geometry_msgs::Vector3 eta2){
 	Matrix3f J_1= compute_jacobian1(eta2);
 	Matrix3f J_2= compute_jacobian2(eta2);
@@ -82,6 +82,8 @@ MatrixXf compute_jacobian_tot(geometry_msgs::Vector3 eta2){
 	return J_tot;
 }
 
+// Questa funzione restituisce la hat form di un vettore 
+// per fare il prodotto vettoriale in forma di prodotto matrice per vettore 
 Matrix3f skew_symmetric(geometry_msgs::Vector3 ni2){
 	Vector3f ni_2 = ros2eigen(ni2);
 	Matrix3f S(3,3);
@@ -97,25 +99,27 @@ Matrix3f skew_symmetric(geometry_msgs::Vector3 ni2){
 	return S;
 }
 
-//CONVERSIONE DEG <=> RAD
+// Funzione per la conversione da gradi a radianti
 float deg2rad(float degree){
   float rad = degree * M_PI /180;
   return rad;
 }
 
+// Funzione per la conversione da radianti a gradi
 float rad2deg(float rad){
 	float degree = rad * 180 / M_PI;
 	return degree;
 }
 
-// MAPPATURA ANGOLI IN (-PI, +PI)
+// Funzione che rimappa un angolo in radianti nel range [-pi, +pi]
 float constrain_angle(double x){
     x = fmod(x + M_PI, 2*M_PI);
     if (x < 0)
         x += 2*M_PI;
     return x - M_PI;
 }
-//CONVERSIONE NED2LLA
+
+// Funzione per la conversione da NED a LL
 Vector2f NEDtoLL_conversion(geometry_msgs::Vector3 eta1, geometry_msgs::Vector3 lla0){
   Vector3f eta_1 = ros2eigen(eta1);
   Vector2f lla0rad;
@@ -130,6 +134,7 @@ Vector2f NEDtoLL_conversion(geometry_msgs::Vector3 eta1, geometry_msgs::Vector3 
   return LL;
 }
 
+// Funzione per generare un float casuale nel range [min, max]
 float frand(float min, float max){
 	float range = rand()/(float )RAND_MAX;
 	return min + range*(max-min);
