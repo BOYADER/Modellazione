@@ -149,7 +149,7 @@ void overwater_check(Vector3f ni1){
 
     	// fixing acceleration
     	state.eta_1_dot_dot.z = 0;
-    	return;
+    		return;
   	}
   	else
   		return;
@@ -215,6 +215,33 @@ void resolve_dynamics(){
 void tau_read(const modellazione::tau &wrench){
   dyn_force = wrench.tau.force;
   dyn_torque = wrench.tau.torque;
+//Controllo su fatto che il rollio non è attuato
+  dyn_torque.x = 0;
+//Controllo sulle saturazioni dei motori 
+//nel caso in cui il controllo passi delle
+//forze o coppie non attuabili
+	if(dyn_force.x > 130)
+		dyn_force.x = 130;
+	if(dyn_force.x < -130)
+		dyn_force.x = -130;
+	if(dyn_force.y > 130)
+		dyn_force.y = 130;
+	if(dyn_force.y < -130)
+		dyn_force.y = -130;
+	if(dyn_force.z > 130)
+		dyn_force.z = 300;
+	if(dyn_force.z < -130)
+		dyn_force.z = -130;
+	
+	if(dyn_torque.y > 65)
+		dyn_torque.y = 65;
+	if(dyn_torque.y < -65)
+		dyn_torque.y = -65;
+	if(dyn_torque.z > 65)
+		dyn_torque.z = 65;
+	if(dyn_torque.z < -65)
+		dyn_torque.z = -65;
+	
 }
 
 
@@ -268,7 +295,7 @@ int main(int argc, char **argv)
     std::cout << "VETTORE G: \n" << G << std::endl << std::endl;
     */
 
-   	normalize_angles();
+    normalize_angles();
 
     state.prova = count++;
     
