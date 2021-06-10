@@ -84,9 +84,9 @@ void initializeM(){
   M(0,0) = R_M - X_u_dot;
   M(1,1) = R_M - Y_v_dot;
   M(2,2) = R_M - Z_w_dot;
-  M(3,3) = I_X;
-  M(4,4) = I_Y;
-  M(5,5) = I_Z;
+  M(3,3) = I_X - K_p_dot;
+  M(4,4) = I_Y - M_q_dot;
+  M(5,5) = I_Z - N_r_dot;
 }
 
 void updateD(){
@@ -129,7 +129,7 @@ void updateG(){
     f_b = - f_g;
   else*/
   f_b = J_inv * buoyancy;
-  G.head(3) = -(f_g + f_b);
+  G.head(3) = - (f_g + f_b);
   G.tail(3) = - (r_b.cross(f_b));
 }
 
