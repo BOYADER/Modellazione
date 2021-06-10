@@ -33,7 +33,7 @@ Vector3f weight(0, 0, robot_weight);		// vettore forza peso in terna body
 Vector3f buoyancy(0, 0, -robot_buoyancy);	// vettore forza di galleggiamento in terna body
 
 
-// Questa funzione restituisce la parte lneare del Jacobiano geometrico (3x3)
+// Questa funzione restituisce il jacobiano J1 (3x3)
 Matrix3f compute_jacobian1(geometry_msgs::Vector3 eta2){
 	Vector3f eta_2 = ros2eigen(eta2);
 	Matrix3f J_1(3, 3); 
@@ -50,7 +50,7 @@ Matrix3f compute_jacobian1(geometry_msgs::Vector3 eta2){
 	return J_1;
 
 }
-// Questa funzione restituisce la parte angolare del Jacobiano geometrico (3x3)
+// Questa funzione restituisce il jacobiano J2 (3x3)
 Matrix3f compute_jacobian2(geometry_msgs::Vector3 eta2){
 	Vector3f eta_2 = ros2eigen(eta2);
 	Matrix3f J_2(3, 3); 
@@ -68,7 +68,7 @@ Matrix3f compute_jacobian2(geometry_msgs::Vector3 eta2){
 
 }
 
-// Questa funzione restituisce il Jacobiano geometrico completo (6x6)
+// Questa funzione restituisce il Jacobiano completo (6x6)
 MatrixXf compute_jacobian_tot(geometry_msgs::Vector3 eta2){
 	Matrix3f J_1= compute_jacobian1(eta2);
 	Matrix3f J_2= compute_jacobian2(eta2);
@@ -82,8 +82,8 @@ MatrixXf compute_jacobian_tot(geometry_msgs::Vector3 eta2){
 	return J_tot;
 }
 
-// Questa funzione restituisce la hat form di un vettore 
-// per fare il prodotto vettoriale in forma di prodotto matrice per vettore 
+// Questa funzione restituisce la hat form di un vettore, 
+// ovvero la sua matrice antisimmetrica associata 
 Matrix3f skew_symmetric(geometry_msgs::Vector3 ni2){
 	Vector3f ni_2 = ros2eigen(ni2);
 	Matrix3f S(3,3);
@@ -111,7 +111,7 @@ float rad2deg(float rad){
 	return degree;
 }
 
-// Funzione che rimappa un angolo in radianti nel range [-pi, +pi]
+// Funzione che mappa un angolo in radianti nel range [-pi, +pi]
 float constrain_angle(double x){
     x = fmod(x + M_PI, 2*M_PI);
     if (x < 0)

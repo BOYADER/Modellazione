@@ -22,9 +22,11 @@ void dvl_state_read(const modellazione::state_real &state)
   // Lettura delle info dalla topic
   Vector3f ni1 = ros2eigen(state.ni_1);
   Matrix3f S = skew_symmetric(state.ni_2);
-  // Aggiornamento della variabile globaleche contiene le misure
+
+  // Aggiornamento della variabile globale che contiene le misure
   dvl_measure.lin_vel = eigen2ros( R_dvl_body *(ni1 + S*p_dvl) ); 
   dvl_measure.counter++; 
+  
   // Calcolo deviazioni standard che verranno usate nel main per sporcare le misure
   std_dev_x = 0.01 * ni1(0) + 0.01;
   std_dev_y = 0.01 * ni1(1) + 0.01;

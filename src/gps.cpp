@@ -9,7 +9,7 @@
 using namespace std;
 using namespace Eigen;
 
-modellazione::gps gps_measure; // Contiene i messaggi che verranno di volta in volta pubblicate 
+modellazione::gps gps_measure; // Contiene i messaggi che verranno di volta in volta pubblicati 
 geometry_msgs::Vector3 eta1; // Variabile di appoggio per la lettura della posizione dalla topic /state_real
 
 // Questa funzione legge dalla topic /state_real i valori relativi allo stato attuale del robot

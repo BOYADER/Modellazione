@@ -19,6 +19,7 @@ void depth_state_read(const modellazione::state_real &state)
   // Calcoliamo la profondità del sensore rispetto al CdM in terna NED
   Matrix3f J_inv = compute_jacobian1(state.eta_2).transpose();
   float p_depth_z = (J_inv * p_depth)(2);
+
   // Calcoliamo la profondità totale del profondimetro, sempre in terna NED
   depth_measure.z = state.eta_1.z + p_depth_z; 
   depth_measure.counter++;         
@@ -54,8 +55,10 @@ int main(int argc, char **argv){
   	ros::spinOnce();
     // Si sporcano le misure
     depth_measure.z += depth_distribution(generator);
+
     // Informazioni di debug
-    ROS_INFO("sto per pubblicare: \n depth = [%f] \n counter = [%f]", depth_measure.z, depth_measure.counter);
+    /*ROS_INFO("sto per pubblicare: \n depth = [%f] \n counter = [%f]", depth_measure.z, depth_measure.counter);*/
+    
     // Pubblicazione sulla topic del sensore
     depth_pub.publish(depth_measure);
   

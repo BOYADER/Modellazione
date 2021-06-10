@@ -12,7 +12,7 @@ Vector3f p_depth(0, 0, R_PROFONDIMETRO); // vettore posizione del profondimetro 
 #define R_DVL_Z 0.03 //coordinata z del dvl rispetto alla terna body
 #define THETA_DVL 0 //rotazione relativa tra terna body e dvl 
 Vector3f p_dvl(R_DVL_X, 0, R_DVL_Z); // vettore posizione del DVL in terna body
-MatrixXf R_dvl_body(3,3); // matrice di rotazione da terna body a terna profondimetro
+MatrixXf R_dvl_body(3,3); // matrice di rotazione da terna body a terna pDVL
 
 // Funzione che inizializza la matrice di rotazione R_dvl_body
 void initialise_R_dvl_body(){

@@ -14,7 +14,7 @@
 using namespace Eigen;
 using namespace std;
 
-modellazione::usbl usbl_measure; // Contiene i messaggi  che verranno di volta in volta pubblicate
+modellazione::usbl usbl_measure; // Contiene i messaggi  che verranno di volta in volta pubblicati
 geometry_msgs::Vector3 eta1, eta2; // Variabili di appoggio per la lettura di posizione e orientazione dalla topic /state_real
 float dist; // Contiene la distanza tra USBL e transponder usata per calcolare RTT
 
@@ -25,7 +25,7 @@ void usbl_state_read(const modellazione::state_real &state)
   eta2 = state.eta_2;
 }
 
-// Questa funzione sfruttta le info lette sullo stato attuale per calcolare i valori da pubblicare sulla topic
+// Questa funzione sfrutta le info lette sullo stato attuale per calcolare i valori da pubblicare sulla topic
 void compute_measure(){
     Vector3f p_t(0, 0, 0); 
     Matrix3f J_inv = compute_jacobian1(eta2).transpose(); //ned to usbl(coincide con body)
@@ -41,7 +41,7 @@ void compute_measure(){
 
 }
 
-// Funzione che calcola di volata in volta la frequenza di pubblicazione
+// Funzione che calcola di volta in volta la frequenza di pubblicazione
 // in base alla distanza tra robot e trasponder
 float compute_frequency(){
   return V_C/(2*dist);
@@ -99,9 +99,11 @@ int main(int argc, char **argv){
     // Si aspetta prima di pubblicare per simulare il tempo di andata e ritorno
     ros::Rate loop_rate(RTT);
     loop_rate.sleep();
-	  // Informaizoni di debug
+
+	  // Informazioni di debug
     /*ROS_INFO("[USBL] Sto per pubblicare: rbe = \n [%f \n %f \n %f] \n",usbl_measure.pos.x, usbl_measure.pos.y, usbl_measure.pos.z);
     std::cout << "RTT = " << RTT<<endl<<endl;*/
+    
 	  // Pubblicazione sulla topic delle misurazioni
     usbl_pub.publish(usbl_measure);
 

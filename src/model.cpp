@@ -132,7 +132,7 @@ void updateG(){
   G.tail(3) = - (r_b.cross(f_b));
 }
 
-// Questa funzione controlla che il veicolonon voli opra la superficie dell'acqua
+// Questa funzione controlla che il veicolo non superi la superficie dell'acqua
 void overwater_check(Vector3f ni1){
 	if (state.eta_1.z < 0){
     	// fixing position
@@ -215,11 +215,14 @@ void resolve_dynamics(){
 void tau_read(const modellazione::tau &wrench){
   dyn_force = wrench.tau.force;
   dyn_torque = wrench.tau.torque;
+
 //Controllo su fatto che il rollio non è attuato
   dyn_torque.x = 0;
+
 //Controllo sulle saturazioni dei motori 
 //nel caso in cui il controllo passi delle
 //forze o coppie non attuabili
+
 	if(dyn_force.x > 130)
 		dyn_force.x = 130;
 	if(dyn_force.x < -130)
@@ -229,7 +232,7 @@ void tau_read(const modellazione::tau &wrench){
 	if(dyn_force.y < -130)
 		dyn_force.y = -130;
 	if(dyn_force.z > 130)
-		dyn_force.z = 300;
+		dyn_force.z = 130;
 	if(dyn_force.z < -130)
 		dyn_force.z = -130;
 	

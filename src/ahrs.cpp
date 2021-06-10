@@ -62,9 +62,9 @@ int main(int argc, char **argv){
     ahrs_measure.gyro.z += gyro_distribution(generator) + gyro_bias;
 
     // Informazioni di debug
-    ROS_INFO("[AHRS]Sto per pubblicare \ngyro = [%f %f %f] \nahrs= [%f %f %f]\n",
+    /*ROS_INFO("[AHRS]Sto per pubblicare \ngyro = [%f %f %f] \nahrs= [%f %f %f]\n",
             ahrs_measure.gyro.x, ahrs_measure.gyro.y, ahrs_measure.gyro.z,
-            ahrs_measure.rpy.x, ahrs_measure.rpy.y, ahrs_measure.rpy.z);
+            ahrs_measure.rpy.x, ahrs_measure.rpy.y, ahrs_measure.rpy.z);*/
     
     // Pubblicazione sulla topic delle misurazioni
     ahrs_pub.publish(ahrs_measure);
