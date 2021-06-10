@@ -22,7 +22,8 @@ geometry_msgs::Vector3 dyn_torque;
 modellazione::state_real state;
 geometry_msgs::Vector3 eta_1_dot_dot;
 
-//added mass matrix elements
+
+// Added mass elements for mass matrix M and coriolis matrix C
 
 float e = 1 - (R_B/R_A) * (R_B/R_A);
 float alpha_0 = 2 * (1 - e * e) * ( 0.5 * log((1 + e) / (1 - e)) - e) / (e * e * e);
@@ -38,7 +39,7 @@ float N_r_dot = (-1.0/5*R_M)* ( R_B*R_B - R_A*R_A)*( R_B*R_B - R_A*R_A)*(alpha_0
 float M_q_dot = (-1.0/5*R_M)* ( R_B*R_B - R_A*R_A)*( R_B*R_B - R_A*R_A)*(alpha_0 - beta_0)/(2.0*(R_B*R_B - R_A*R_A) + (R_B*R_B + R_A*R_A)*(beta_0 - alpha_0));
 
 
-
+// This function provides damping linear and angular coefficients 
 float compute_damping(u_int lato, float ni_i) 
 {
   float area, b, b1, b2, contr1, contr2;
@@ -71,14 +72,12 @@ float compute_damping(u_int lato, float ni_i)
 
 
 
-// dynamic matrices
+// Dynamic matrices' definition and initialization/update
 
 MatrixXf M(6,6);
 MatrixXf D(6,6);
 MatrixXf C(6,6);
 VectorXf G(6);
-
-
 
 void initializeM(){
   M(0,0) = R_M - X_u_dot;
@@ -133,7 +132,7 @@ void updateG(){
   G.tail(3) = - (r_b.cross(f_b));
 }
 
-
+// Questa funzione controlla che il veicolonon voli opra la superficie dell'acqua
 void overwater_check(Vector3f ni1){
 	if (state.eta_1.z < 0){
     	// fixing position
@@ -155,7 +154,8 @@ void overwater_check(Vector3f ni1){
   		return;
 }
 
-
+// Questa funzione risolve le equazioni della dinamica 
+// e aggiorna lo stato del robot 
 void resolve_dynamics(){
   static ros::Time old_time;
   static int count;
@@ -211,7 +211,7 @@ void resolve_dynamics(){
 
 }
 
-
+// Questa funzione legge il valore delle forze e coppie fornite dal controllo sul relativo topic
 void tau_read(const modellazione::tau &wrench){
   dyn_force = wrench.tau.force;
   dyn_torque = wrench.tau.torque;
@@ -244,8 +244,8 @@ void tau_read(const modellazione::tau &wrench){
 	
 }
 
-
-//NOTA: perdiamo traccia di eventuali giri compiuti dal robot
+//Questa funzione normalizza il valore degli angoli presenti
+//nel vettore eta2 per renderli compresi in [-pi,+pi]
 void normalize_angles(){
 	state.eta_2.x = constrain_angle(state.eta_2.x);
 	state.eta_2.y = constrain_angle(state.eta_2.y);
