@@ -44,26 +44,27 @@ float compute_damping(u_int lato, float ni_i)
 {
   float area, b, b1, b2, contr1, contr2;
   switch(lato){
-    case 1:
+
+    case 1: //surge
       area = 2 * R_A * 2 * R_B;
       return (-1.0/2) * RHO_W * area *C_D_X* abs(ni_i);
     
-    case 2:
+    case 2: //sway-heave
       area = 2 * R_B * 2 * R_C; 
       return (-1.0/2) * RHO_W * area *C_D_YZ * abs(ni_i);
     
-    case 3:
+    case 3: //pitch-yaw
       area = R_B * 2 * R_C; 
       b = sqrt(R_A*R_A/4.0 + R_B*R_B/4.0);
       return (-1.0/2) * RHO_W * area *C_D_YZ * abs(ni_i)*b*b*b * 2;  
     
-    case 4:
+    case 4: //roll
       area = 2 * R_A * 2 * R_B;
-      b1 = (R_B + R_B/2.0) /2.0;
+      b1 = (R_B + R_B/2.0) / 2.0;
       b2 = R_B / 4.0;
       contr1 = (-1.0/2) * RHO_W * area*3/4.0 *C_D_X * abs(ni_i)*b1*b1*b1;
       contr2 = (-1.0/2) * RHO_W * area/4.0 *C_D_X * abs(ni_i)*b2*b2*b2;
-      return contr1 + contr2;
+      return (contr1 + contr2);
 
     default:
       break;
@@ -93,8 +94,8 @@ void updateD(){
   D(1,1) = - compute_damping(2, state.ni_1.y) + 10;
   D(2,2) = - compute_damping(2, state.ni_1.z) + 10;
   D(3,3) = - 10*compute_damping(4, state.ni_2.x) + 1.0;
-  D(4,4) = - 10*compute_damping(3, state.ni_2.y) + 0.5;
-  D(5,5) = - 10*compute_damping(3, state.ni_2.z) + 0.5;
+  D(4,4) = - 10*compute_damping(3, state.ni_2.y) + 1.0;
+  D(5,5) = - 10*compute_damping(3, state.ni_2.z) + 1.0;
 }
 
 void updateC(){
@@ -123,17 +124,30 @@ void updateC(){
 void updateG(){
   Matrix3f J_inv = compute_jacobian1(state.eta_2).transpose();
   Vector3f f_g = J_inv * weight;
-  Vector3f f_b;
-/*  if(state.eta_1.z <= 0)
-    f_b = - f_g;
-  else*/
-  f_b = J_inv * buoyancy;
+  Vector3f f_b(0, 0, 0);
+
+  //Per il calcolo della forza di galleggiamento studiamo 3 casi diversi:
+  // 1) robot emerso parzialmente
+  // 2) robot completamente emerso (caso estremo)
+  // 3) robot completamente immerso
+  if(state.eta_1.z < 0.22){
+    float volume_emerso = (M_PI*R_A*R_B*(0.22-state.eta_1.z)*(0.22-state.eta_1.z)*(3*R_C-(0.22-state.eta_1.z)))/(3*R_C*R_C);
+    float forza_galleggiamento = RHO_W*(robot_volume-volume_emerso)*G_ACC;
+    Vector3f vett_galleggiamento(0, 0, -forza_galleggiamento);
+    f_b = J_inv*vett_galleggiamento;
+  }
+  else if (state.eta_1.z<-0.08)
+   ;
+  else
+    f_b = J_inv * buoyancy;
+
+
   G.head(3) = - (f_g + f_b);
   G.tail(3) = - (r_b.cross(f_b));
 }
 
 // Questa funzione controlla che il veicolo non superi la superficie dell'acqua
-void overwater_check(Vector3f ni1){
+/*void overwater_check(Vector3f ni1){
 	if (state.eta_1.z < 0){
     	// fixing position
   		state.eta_1.z = 0; 
@@ -152,7 +166,7 @@ void overwater_check(Vector3f ni1){
   	}
   	else
   		return;
-}
+}*/
 
 // Questa funzione risolve le equazioni della dinamica 
 // e aggiorna lo stato del robot 
@@ -204,7 +218,7 @@ void resolve_dynamics(){
   state.ni_1 = eigen2ros(new_ni.head(3));
   state.ni_2 = eigen2ros(new_ni.tail(3));
 
-  overwater_check(ni1);
+  //overwater_check(ni1);
 
   old_time = new_time;
   count++;
@@ -274,6 +288,7 @@ int main(int argc, char **argv)
   state.eta_2.x = roll0;  
   state.eta_2.y = pitch0;
   state.eta_2.z = yaw0;
+  //state.eta_1.z = 0.2023; //Posizione di equilibrio tra forza peso e di galleggiamento
   /*----------------------------------------------------------------------*/
 
   ros::Rate loop_rate(MODEL_FREQUENCY);

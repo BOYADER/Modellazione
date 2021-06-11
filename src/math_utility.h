@@ -27,10 +27,10 @@ Vector3f ros2eigen(geometry_msgs::Vector3 v_msg)
 
 float robot_volume = (4.0/3.0) * M_PI * R_A * R_B * R_C; // volume del robot [m^3]
 float robot_weight = RHO_V * robot_volume * G_ACC;	 // forza peso del robot [N]
-float robot_buoyancy = RHO_W * robot_volume * G_ACC;	 // forza di galleggiamento [N]
+float robot_buoyancy = RHO_W * robot_volume * G_ACC;	 // forza di galleggiamento quando il robot è completamente immerso [N]
 Vector3f r_b(0, 0, -R_GB);			// vettore posizione del centro geometrico in terna body
 Vector3f weight(0, 0, robot_weight);		// vettore forza peso in terna body
-Vector3f buoyancy(0, 0, -robot_buoyancy);	// vettore forza di galleggiamento in terna body
+Vector3f buoyancy(0, 0, -robot_buoyancy);	// vettore forza di galleggiamento (quando il robot è completamente immerso) in terna body
 
 
 // Questa funzione restituisce il jacobiano J1 (3x3)
