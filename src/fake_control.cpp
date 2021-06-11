@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     else
       control_tau.tau.force.x = 0; 
     
-    /*--------------------Impulso di Gradino---------------------------------*/
+    /*--------------------Impulso di Coppia---------------------------------*/
     //Inserire direzione
     /*if(count > 20 && count <= 22)
       control_tau.tau.torque.y = 30;        
@@ -59,34 +59,42 @@ int main(int argc, char **argv)
 
 
 
-
-
     /*----------------------------SIMULAZIONE GRADINO -----------------------*/
     //INSERIRE force o torque e la direzione su cui si vuole testare il gradino
 
     /*if(count > 20)
-      control_tau.tau.force.x = 100;        
+      control_tau.tau.torque.z = 20;        
     else
-      control_tau.tau.force.x = 0; 
+      control_tau.tau.torque.z = 0; 
     /*-----------------------------------------------------------------------*/
 
 
 
 
     /*---------------------VALIDAZIONE UNDER_WATER GPS-----------------------*/
-    /*if((count > 10 && count <= 15) || (count > 80 && count <=85))
-      control_tau.tau.force.z = 50;
+    /*if(count > 20 && count <= 25)
+      control_tau.tau.force.z = 100;
     else
-      control_tau.tau.force.z = 0;*/
+      control_tau.tau.force.z = 0;
     /*-----------------------------------------------------------------------*/
 
 
 
 
     /*---------------------------VALIDAZIONE DVL-----------------------------*/
-    /*if(count > 10){
-      control_tau.tau.force.x = 100;
-      control_tau.tau.force.y = 100;
+    /*if(count > 10 && count <= 70){
+      control_tau.tau.force.x = 20;
+      control_tau.tau.force.y = 20;
+    }
+    else if (count > 70 && count <= 120){
+      control_tau.tau.force.x = 50;
+      control_tau.tau.force.y = 50;      
+    }else if(count > 120 && count <=150){
+      control_tau.tau.force.x = 130;
+      control_tau.tau.force.y = 130; 
+    }else {
+      control_tau.tau.force.x = 0;
+      control_tau.tau.force.y = 0; 
     }
     /*-----------------------------------------------------------------------*/
 

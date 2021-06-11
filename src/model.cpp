@@ -80,6 +80,7 @@ MatrixXf D(6,6);
 MatrixXf C(6,6);
 VectorXf G(6);
 
+
 void initializeM(){
   M(0,0) = R_M - X_u_dot;
   M(1,1) = R_M - Y_v_dot;
@@ -89,6 +90,7 @@ void initializeM(){
   M(5,5) = I_Z - N_r_dot;
 }
 
+
 void updateD(){
   D(0,0) = - compute_damping(1, state.ni_1.x) + 10;
   D(1,1) = - compute_damping(2, state.ni_1.y) + 10;
@@ -97,6 +99,7 @@ void updateD(){
   D(4,4) = - 10*compute_damping(3, state.ni_2.y) + 1.0;
   D(5,5) = - 10*compute_damping(3, state.ni_2.z) + 1.0;
 }
+
 
 void updateC(){
   C(0,4) = - Z_w_dot * state.ni_1.z;
@@ -146,6 +149,7 @@ void updateG(){
   G.tail(3) = - (r_b.cross(f_b));
 }
 
+
 // Questa funzione controlla che il veicolo non superi la superficie dell'acqua
 /*void overwater_check(Vector3f ni1){
 	if (state.eta_1.z < 0){
@@ -167,6 +171,7 @@ void updateG(){
   	else
   		return;
 }*/
+
 
 // Questa funzione risolve le equazioni della dinamica 
 // e aggiorna lo stato del robot 
@@ -225,41 +230,48 @@ void resolve_dynamics(){
 
 }
 
+void check_saturation(){
+  //Controllo su fatto che il rollio non è attuato
+  dyn_torque.x = 0;
+
+  //Controllo sulle saturazioni dei motori 
+  //nel caso in cui il controllo passi delle
+  //forze o coppie non attuabili
+
+  if(dyn_force.x > 130)
+    dyn_force.x = 130;
+  if(dyn_force.x < -100)
+    dyn_force.x = -100;
+  if(dyn_force.y > 130)
+    dyn_force.y = 130;
+  if(dyn_force.y < -100)
+    dyn_force.y = -100;
+  if(dyn_force.z > 130)
+    dyn_force.z = 130;
+  if(dyn_force.z < -100)
+    dyn_force.z = -100;
+  
+  if(dyn_torque.y > 65)
+    dyn_torque.y = 65;
+  if(dyn_torque.y < -50)
+    dyn_torque.y = -50;
+  if(dyn_torque.z > 65)
+    dyn_torque.z = 65;
+  if(dyn_torque.z < -50)
+    dyn_torque.z = -50;
+
+}
+
+
 // Questa funzione legge il valore delle forze e coppie fornite dal controllo sul relativo topic
 void tau_read(const modellazione::tau &wrench){
   dyn_force = wrench.tau.force;
   dyn_torque = wrench.tau.torque;
 
-//Controllo su fatto che il rollio non è attuato
-  dyn_torque.x = 0;
-
-//Controllo sulle saturazioni dei motori 
-//nel caso in cui il controllo passi delle
-//forze o coppie non attuabili
-
-	if(dyn_force.x > 130)
-		dyn_force.x = 130;
-	if(dyn_force.x < -130)
-		dyn_force.x = -130;
-	if(dyn_force.y > 130)
-		dyn_force.y = 130;
-	if(dyn_force.y < -130)
-		dyn_force.y = -130;
-	if(dyn_force.z > 130)
-		dyn_force.z = 130;
-	if(dyn_force.z < -130)
-		dyn_force.z = -130;
-	
-	if(dyn_torque.y > 65)
-		dyn_torque.y = 65;
-	if(dyn_torque.y < -65)
-		dyn_torque.y = -65;
-	if(dyn_torque.z > 65)
-		dyn_torque.z = 65;
-	if(dyn_torque.z < -65)
-		dyn_torque.z = -65;
+  check_saturation();
 	
 }
+
 
 //Questa funzione normalizza il valore degli angoli presenti
 //nel vettore eta2 per renderli compresi in [-pi,+pi]
@@ -288,8 +300,8 @@ int main(int argc, char **argv)
   state.eta_2.x = roll0;  
   state.eta_2.y = pitch0;
   state.eta_2.z = yaw0;
-  //state.eta_1.z = 0.2023; //Posizione di equilibrio tra forza peso e di galleggiamento
-  /*----------------------------------------------------------------------*/
+  //state.eta_1.z = 0.2023; //profondità di equilibrio tra forza peso e di galleggiamento
+  /*---------------------------------------------------------------------*/
 
   ros::Rate loop_rate(MODEL_FREQUENCY);
   
@@ -317,13 +329,13 @@ int main(int argc, char **argv)
 
     state.prova = count++;
     
-    ROS_INFO("Sto per pubblicare \neta1 = [%f %f %f] \nni1 = [%f %f %f] \neta1_dot_dot= [%f %f %f] \neta2 = [%f %f %f] \nni2 = [%f %f %f] \nmsg numero: %f \n",
+    /*ROS_INFO("Sto per pubblicare \neta1 = [%f %f %f] \nni1 = [%f %f %f] \neta1_dot_dot= [%f %f %f] \neta2 = [%f %f %f] \nni2 = [%f %f %f] \nmsg numero: %f \n",
               state.eta_1.x, state.eta_1.y, state.eta_1.z,
               state.ni_1.x, state.ni_1.y, state.ni_1.z,
               state.eta_1_dot_dot.x,state.eta_1_dot_dot.y,state.eta_1_dot_dot.z,
               state.eta_2.x, state.eta_2.y, state.eta_2.z,
               state.ni_2.x, state.ni_2.y, state.ni_2.z,
-              state.prova);
+              state.prova);*/
 
     model_pub.publish(state);
 

@@ -1,0 +1,11 @@
+<launch>
+	<rosparam file = "$(find modellazione)/config/mission.yaml"/>	
+	
+	<node name ="model"   pkg="modellazione" type="model" output="screen"/>
+	<node name="gps" 	  pkg="modellazione" type="gps_sensor" output="screen"/>
+	<node name="control"  pkg="modellazione" type="fake_control" output="screen"/>
+	<node name="nav" 	  pkg="modellazione" type="fake_nav" output="screen"/>	
+
+    <node name="gps_validation" pkg="rqt_plot" type="rqt_plot" args="/state_real/eta_1/z, /sensor/gps/under_water"/>
+
+</launch>

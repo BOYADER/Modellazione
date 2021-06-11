@@ -1,0 +1,11 @@
+<launch>
+	<rosparam file = "$(find modellazione)/config/mission.yaml"/>	
+	
+	<node name ="model"   pkg="modellazione" type="model" output="screen"/>
+	<node name="dvl" 	  pkg="modellazione" type="dvl_sensor" output="screen"/>
+	<node name="control"  pkg="modellazione" type="fake_control" output="screen"/>
+	<node name="nav" 	  pkg="modellazione" type="fake_nav" output="screen"/>	
+
+    <node name="dvl_validation" pkg="rqt_plot" type="rqt_plot" args="/state_real/ni_1/x, /state_real/ni_1/y, /state_real/ni_1/z, /sensor/dvl/lin_vel/x, /sensor/dvl/lin_vel/y, /sensor/dvl/lin_vel/z"/>
+
+</launch>
