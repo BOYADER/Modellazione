@@ -266,12 +266,12 @@ void check_saturation(){
       // in order to set vertical force component to zero
     	// we have to change reference frame to NED 
     	// and then again to body
-    	Vector3f tau_NED = compute_jacobian1(state.eta_2) * dyn_force;
-    	if(tau_NED(2) < 0)
-        tau_NED(2) = 0;
-    	Vector3f tau_body = compute_jacobian1(state.eta_2).transpose()*tau_NED;
-    	dyn_force = eigen2ros(tau_body);
-      
+      Vector3f force_body = ros2eigen(dyn_force);
+    	Vector3f force_NED = compute_jacobian1(state.eta_2) * force_body;
+    	if(force_NED(2) < 0)
+        force_NED(2) = 0;
+    	Vector3f tau_body = compute_jacobian1(state.eta_2).transpose()*force_NED;
+    	dyn_force = eigen2ros(force_body); 
   }*/
 }
 
