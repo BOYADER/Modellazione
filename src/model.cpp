@@ -271,8 +271,8 @@ void check_saturation(){
         tau_NED(2) = 0;
     	Vector3f tau_body = compute_jacobian1(state.eta_2).transpose()*tau_NED;
     	dyn_force = eigen2ros(tau_body);
-      */
-  }
+      
+  }*/
 }
 
 
