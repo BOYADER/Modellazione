@@ -259,7 +259,7 @@ void check_saturation(){
     dyn_torque.z = 65;
   if(dyn_torque.z < -50)
     dyn_torque.z = -50;
-
+/*
   // Controllo sul fatto che se il veicolo è in superficie
   // non si possano dare spinte verso l'alto
   if(state.eta_1.z <=0){
@@ -271,6 +271,7 @@ void check_saturation(){
         tau_NED(2) = 0;
     	Vector3f tau_body = compute_jacobian1(state.eta_2).transpose()*tau_NED;
     	dyn_force = eigen2ros(tau_body);
+      */
   }
 }
 
