@@ -41,6 +41,7 @@ int main(int argc, char **argv)
     
     ros::spinOnce();
 
+
     /*-------------------------SIMULAZIONE IMPULSO---------------------------*/
     /*--------------------Impulso di Forza-----------------------------------*/
     //Inserire direzione 
@@ -69,6 +70,31 @@ int main(int argc, char **argv)
     /*-----------------------------------------------------------------------*/
 
 
+
+    /*--------------------SIMULAZIONE SURGE + PITCH--------------------------*/
+    /*if(count > 20 && count <= 150){
+      control_tau.tau.force.x = 100;
+      control_tau.tau.torque.y = -30;
+    }
+    /*else{
+      control_tau.tau.force.x = 0;
+      control_tau.tau.torque.y = 0;
+    }
+
+    /*-----------------------------------------------------------------------*/
+
+
+
+    /*--------------------SIMULAZIONE SURGE + YAW----------------------------*/
+    /*if(count > 20 && count <= 150){
+      control_tau.tau.force.x = 100;
+      control_tau.tau.torque.z = 30;
+    }
+    else{
+      control_tau.tau.force.x = 0;
+      control_tau.tau.torque.z = 0;
+    }
+    /*-----------------------------------------------------------------------*/
 
 
     /*---------------------VALIDAZIONE UNDER_WATER GPS-----------------------*/

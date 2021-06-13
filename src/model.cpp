@@ -300,7 +300,7 @@ int main(int argc, char **argv)
   state.eta_2.x = roll0;  
   state.eta_2.y = pitch0;
   state.eta_2.z = yaw0;
-  //state.eta_1.z = 0.2023; //profondità di equilibrio tra forza peso e di galleggiamento
+  state.eta_1.z = 0.2023; //profondità di equilibrio tra forza peso e di galleggiamento
   /*---------------------------------------------------------------------*/
 
   ros::Rate loop_rate(MODEL_FREQUENCY);

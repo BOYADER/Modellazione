@@ -4,7 +4,7 @@
 using namespace Eigen;
 
 //PROFONDIMETRO
-#define R_PROFONDIMETRO 0.08 // distanza tra centro di massa e profondimetro [m]
+#define R_PROFONDIMETRO 0.0 // distanza tra centro di massa e profondimetro [m]
 Vector3f p_depth(0, 0, R_PROFONDIMETRO); // vettore posizione del profondimetro in terna body
 
 //DVL
