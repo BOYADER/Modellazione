@@ -28,9 +28,9 @@ void dvl_state_read(const modellazione::state_real &state)
   dvl_measure.counter++; 
   
   // Calcolo deviazioni standard che verranno usate nel main per sporcare le misure
-  std_dev_x = 0.01 * ni1(0) + 0.01;
-  std_dev_y = 0.01 * ni1(1) + 0.01;
-  std_dev_z = 0.01 * ni1(2) + 0.01;
+  std_dev_x = fabs(0.01 * ni1(0)) + 0.01;
+  std_dev_y = fabs(0.01 * ni1(1)) + 0.01;
+  std_dev_z = fabs(0.01 * ni1(2) + 0.01;
 }
 
 int main(int argc, char **argv){
