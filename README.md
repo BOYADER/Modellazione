@@ -45,11 +45,11 @@ E' possibile plottare:
 - Errore sulle singole grandezze.
 - Errore quadratico Medio (MSE) calcolato iterativamente al variare del tempo.
 
-![alt text](/docs/rqt_graph.PNG)
+![alt text](/docs/rqt_graph.png)
 
 ## 3) Struttura del pkg di Modellazione
 
-![alt text](/docs/mod_pkg_screen.PNG)
+![alt text](/docs/mod_pkg_screen.png)
 
 ## 4) Nodi
 
