@@ -26,7 +26,10 @@ Per eseguire correttamente la simulazione ed ottenere i risultati mostrati nel r
         ~/catkin_ws/src/Pianificazione-Controllo/pc_wp/scripts ~$ chmod +x *
      ```  
 - Scaricare pymap3d e termcolor:
-  https://pypi.org/project/pymap3d/ ; https://pypi.org/project/termcolor/.
+    ```
+	python3 -m pip install pymap3d
+	pip install termcolor 
+    ```
 
 ## 2) Simulazione
 Per lanciare la simulazione, basta lanciare da terminale:
