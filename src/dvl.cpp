@@ -50,7 +50,7 @@ int main(int argc, char **argv){
   default_random_engine generator;
   
   // Settiamo la frequenza di pubblicazione sulla topic
-  ros::Rate loop_rate(SENSOR_FREQUENCY);
+  ros::Rate loop_rate(1);
 
   while(ros::ok()){ 
   
