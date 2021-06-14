@@ -27,7 +27,7 @@ Per eseguire correttamente la simulazione ed ottenere i risultati mostrati nel r
      ```  
 - Scaricare pymap3d e termcolor:
     ```
-	python3 -m pip install pymap3d
+	pip install pymap3d
 	pip install termcolor 
     ```
 
