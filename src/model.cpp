@@ -102,24 +102,28 @@ void updateD(){
 
 
 void updateC(){
-  C(0,4) = - Z_w_dot * state.ni_1.z;
-  C(0,5) =   Y_v_dot * state.ni_1.y;
-  C(1,3) =   Z_w_dot * state.ni_1.z;
-  C(1,5) = - X_u_dot * state.ni_1.x;
-  C(2,3) = - Y_v_dot * state.ni_1.y;
-  C(2,4) =   X_u_dot * state.ni_1.x;
-  C(3,1) = - Z_w_dot * state.ni_1.z;
-  C(3,2) =   Y_v_dot * state.ni_1.y;
-  C(4,0) =   Z_w_dot * state.ni_1.z;
-  C(4,2) = - X_u_dot * state.ni_1.x;
-  C(5,0) = - Y_v_dot * state.ni_1.y;
-  C(5,1) =   X_u_dot * state.ni_1.x;
-  C(3,4) = - N_r_dot * state.ni_2.z;
-  C(3,5) =   M_q_dot * state.ni_2.y;
-  C(4,3) =   N_r_dot * state.ni_2.z;
-  C(4,5) = - K_p_dot * state.ni_2.x;
-  C(5,3) = - M_q_dot * state.ni_2.y;
-  C(5,4) =   K_p_dot * state.ni_2.x;
+  C(0,4) = - Z_w_dot * state.ni_1.z + R_M*state.ni_1.z;
+  C(0,5) =   Y_v_dot * state.ni_1.y - R_M*state.ni_1.y;
+
+  C(1,3) =   Z_w_dot * state.ni_1.z - R_M*state.ni_1.z;
+  C(1,5) = - X_u_dot * state.ni_1.x + R_M*state.ni_1.x;
+  C(2,3) = - Y_v_dot * state.ni_1.y + R_M*state.ni_1.y;
+  C(2,4) =   X_u_dot * state.ni_1.x - R_M*state.ni_1.x;
+
+  C(3,1) = - Z_w_dot * state.ni_1.z + R_M*state.ni_1.z;
+  C(3,2) =   Y_v_dot * state.ni_1.y - R_M*state.ni_1.y;
+  C(3,4) = - N_r_dot * state.ni_2.z + I_Z * state.ni_2.z;
+  C(3,5) =   M_q_dot * state.ni_2.y - I_Y * state.ni_2.y;
+
+  C(4,0) =   Z_w_dot * state.ni_1.z - R_M * state.ni_1.z;
+  C(4,2) = - X_u_dot * state.ni_1.x + R_M * state.ni_1.x;
+  C(4,3) =   N_r_dot * state.ni_2.z - I_Z * state.ni_2.z;
+  C(4,5) = - K_p_dot * state.ni_2.x + I_X * state.ni_2.x;
+
+  C(5,0) = - Y_v_dot * state.ni_1.y + R_M * state.ni_1.y;
+  C(5,1) =   X_u_dot * state.ni_1.x - R_M * state.ni_1.x;
+  C(5,3) = - M_q_dot * state.ni_2.y + I_Y * state.ni_2.y;
+  C(5,4) =   K_p_dot * state.ni_2.x - I_X * state.ni_2.x;
  
 }
 

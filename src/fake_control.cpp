@@ -53,9 +53,9 @@ int main(int argc, char **argv)
     /*--------------------Impulso di Coppia---------------------------------*/
     //Inserire direzione
     /*if(count > 20 && count <= 22)
-      control_tau.tau.torque.y = 30;        
+      control_tau.tau.torque.x = 30;        
     else
-      control_tau.tau.torque.y = 0; 
+      control_tau.tau.torque.x = 0; 
     /*-----------------------------------------------------------------------*/
 
 
@@ -63,10 +63,10 @@ int main(int argc, char **argv)
     /*----------------------------SIMULAZIONE GRADINO -----------------------*/
     //INSERIRE force o torque e la direzione su cui si vuole testare il gradino
 
-    /*if(count > 20)
-      control_tau.tau.torque.z = 20;        
+    /*if(count > 30)
+      control_tau.tau.torque.y = 20;        
     else
-      control_tau.tau.torque.z = 0; 
+      control_tau.tau.torque.y = 0; 
     /*-----------------------------------------------------------------------*/
 
 
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
       control_tau.tau.force.x = 100;
       control_tau.tau.torque.y = -30;
     }
-    /*else{
+    else{
       control_tau.tau.force.x = 0;
       control_tau.tau.torque.y = 0;
     }
