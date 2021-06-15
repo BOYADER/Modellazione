@@ -1,6 +1,7 @@
 # Modellazione Waypoint: Guida al codice
 Implementazione delle equazioni della dinamica e della cinematica di un AUV. 
 La missione consiste nel raggiungere dei waypoints di cui le coordinate (Lat. Long. e Prof.) sono espresse nel file `mission.yaml`.
+#Realizzato da: Del Medico Riccardo, Gazzanelli Niccolò, Nobili Alberto Maria
 
 ## Contenuti:
 * [1. Requisiti](#1-requisiti)
